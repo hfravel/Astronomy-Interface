@@ -14,11 +14,18 @@ entry = tk.Entry(
 )
 entry.pack(fill=tk.X)
 
-button = tk.Button(
+button1 = tk.Button(
     text="Other SUP",
     width=25, height=2,
     fg="purple", bg="yellow"
 )
-button.pack(fill=tk.X)
+button1.pack(fill=tk.X)
+
+button2 = tk.Button(
+    text="Other SUP",
+    width=25, height=2,
+    fg="purple", bg="yellow"
+)
+button2.pack(fill=tk.X)
 
 window.mainloop()
