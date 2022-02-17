@@ -8,11 +8,13 @@ class AstronomyInterface:
         self.mainButtons = ["1) Help",
                             "2) Equation",
                             "3) Data",
-                            "4) Learn"]
+                            "4) Learn",
+                            "5) Simulation"]
         self.mainFuncs = [self.createHelp,
                           self.createEquation,
                           self.createData,
-                          self.createLearn]
+                          self.createLearn,
+                          self.createSimulation]
 
         # Create the astonromy interface window
         self.window = tk.Tk(className=self.title)
@@ -20,11 +22,13 @@ class AstronomyInterface:
         self.window.mainloop()
         # End init
 
+    # Clear the window for new page
     def destroyWidgets(self):
         for widget in self.window.winfo_children():
             widget.destroy()
         # End destroyWidgets
 
+    # Creates the main page
     def createMain(self):
         self.destroyWidgets()
         # Create the Astronomy Interface Title
@@ -114,6 +118,29 @@ class AstronomyInterface:
         )
         backButton.pack(fill=tk.BOTH, expand=True)
         # End createLearn
+
+    # Used to creat ehe simulation page
+    def createSimulation(self):
+        self.destroyWidgets()
+        simulationLabel = tk.Label(
+            text="Simulation",
+            height=2,
+            font=("Times 15 bold underline")
+        )
+        simulationLabel.pack(fill=tk.X)
+
+        # Create the canvas
+        canvas = tk.Canvas(self.window,
+                        width=200, height = 200,
+                        bg="black")
+        canvas.pack()
+
+        backButton = tk.Button(
+            text="Back",
+            command=self.createMain
+        )
+        backButton.pack(fill=tk.BOTH, expand=True)
+        # End createSimulation
 
 
 
