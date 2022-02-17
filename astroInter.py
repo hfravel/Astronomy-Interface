@@ -18,7 +18,7 @@ class AstronomyInterface:
 
         # Create the astonromy interface window
         self.window = tk.Tk(className=self.title)
-        self.createMain()
+        self.createEquation()
         self.window.mainloop()
         # End init
 
@@ -40,14 +40,14 @@ class AstronomyInterface:
         greeting.pack(fill=tk.X)
 
         # Loops through our list to create the buttons
-        self.buttons = []
+        buttons = []
         for i in range(len(self.mainButtons)):
-            self.buttons.append(tk.Button(
+            buttons.append(tk.Button(
                 text=self.mainButtons[i],
                 command=self.mainFuncs[i],
                 height=2, anchor="w"
             ))
-            self.buttons[i].pack(fill=tk.BOTH,
+            buttons[i].pack(fill=tk.BOTH,
                             expand=True, padx=10, pady=10)
         # End of createMain
 
@@ -78,11 +78,23 @@ class AstronomyInterface:
         )
         equationLabel.pack(fill=tk.X)
 
+        scrolling = tk.Scrollbar(
+            bg="blue"
+        )
+        scrolling.pack(side=tk.RIGHT)
+
+        mylist = tk.Listbox(self.window, yscrollcommand=scrolling.set)
+        for line in range(100):
+            mylist.insert(tk.END, "This is line number " + str(line))
+
+        mylist.pack(side=tk.LEFT)
+        scrolling.config(command=mylist.yview)
+
         backButton = tk.Button(
             text="Back",
             command=self.createMain
         )
-        backButton.pack(fill=tk.BOTH, expand=True)
+        backButton.pack(side=tk.BOTTOM, expand=True)
         # End create Equation
 
     # Used to create the Data Page
@@ -129,12 +141,13 @@ class AstronomyInterface:
         )
         simulationLabel.pack(fill=tk.X)
 
-        # Create the canvas
+        # Create the simulation
         canvas = tk.Canvas(self.window,
                         width=200, height = 200,
                         bg="black")
         canvas.pack()
 
+        # Creates the back Button
         backButton = tk.Button(
             text="Back",
             command=self.createMain
