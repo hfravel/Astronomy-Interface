@@ -1,4 +1,5 @@
 import tkinter as tk
+from equations import AstronomyEquations
 
 # Astronomy Class Declaration
 class AstronomyInterface:
@@ -90,9 +91,11 @@ class AstronomyInterface:
         )
         scrolling.pack(in_=middle, side=tk.RIGHT, fill=tk.Y)
 
-        mylist = tk.Listbox(self.window, yscrollcommand=scrolling.set)
-        for line in range(100):
-            mylist.insert(tk.END, "This is line number " + str(line))
+        mylist = tk.Listbox(self.window, yscrollcommand=scrolling.set, font=("Times 12"))
+        astEq = AstronomyEquations()
+        printEquations = astEq.getAllPrints()
+        for eq in astEq.getAllPrints():
+            mylist.insert(tk.END, getattr(astEq, eq)())
 
         mylist.pack(in_=middle, side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrolling.config(command=mylist.yview)
