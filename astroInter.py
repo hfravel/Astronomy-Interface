@@ -71,30 +71,37 @@ class AstronomyInterface:
     # Used to create the Equation Page
     def createEquation(self):
         self.destroyWidgets()
+        top = tk.Frame()
+        middle = tk.Frame()
+        bottom = tk.Frame()
+        top.pack(side=tk.TOP)
+        middle.pack(fill=tk.BOTH, expand=True)
+        bottom.pack(side=tk.BOTTOM, fill=tk.X)
+
         equationLabel = tk.Label(
             text="Equations List",
             height=2,
             font=("Times 15 bold underline")
         )
-        equationLabel.pack(fill=tk.X)
+        equationLabel.pack(in_=top, fill=tk.X)
 
         scrolling = tk.Scrollbar(
             bg="blue"
         )
-        scrolling.pack(side=tk.RIGHT)
+        scrolling.pack(in_=middle, side=tk.RIGHT, fill=tk.Y)
 
         mylist = tk.Listbox(self.window, yscrollcommand=scrolling.set)
         for line in range(100):
             mylist.insert(tk.END, "This is line number " + str(line))
 
-        mylist.pack(side=tk.LEFT)
+        mylist.pack(in_=middle, side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrolling.config(command=mylist.yview)
 
         backButton = tk.Button(
             text="Back",
             command=self.createMain
         )
-        backButton.pack(side=tk.BOTTOM, expand=True)
+        backButton.pack(in_=bottom, fill=tk.BOTH,expand=True)
         # End create Equation
 
     # Used to create the Data Page
