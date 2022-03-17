@@ -61,15 +61,15 @@ class AstronomyEquations:
     def astDistance1Equation(self, alpha, d):
         return alpha * d / 206265
     def astDistance1Print(self):
-        return 'D = %sd / 206265' % (self.greek['a'])
+        return 'AST Distance -- D = %sd / 206265' % (self.greek['a'])
     def astDistance2Equation(self, alpha, D):
         return 206265 * D / alpha
     def astDistance2Print(self):
-        return 'd = 206265D / %s' % (self.greek['a'])
+        return 'AST Distance -- d = 206265D / %s' % (self.greek['a'])
     def astDistance3Equation(self, theta):
         return 1 / theta
     def astDistance4Print(self):
-        return 'd = 1 / %s' % (self.greek['o'])
+        return 'AST Distance -- d = 1 / %s' % (self.greek['o'])
 
 
 

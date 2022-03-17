@@ -20,7 +20,8 @@ class AstronomyInterface:
 
         # Create the astonromy interface window
         self.window = tk.Tk(className=self.title)
-        self.createEquation()
+        self.createMain()
+        #self.createEquation()
         self.window.mainloop()
         # End init
 
@@ -142,7 +143,7 @@ class AstronomyInterface:
     def createData(self):
         self.destroyWidgets()
         dataLabel = tk.Label(
-            text="Equations List",
+            text="Data",
             height=2,
             font=("Times 15 bold underline")
         )
