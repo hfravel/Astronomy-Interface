@@ -1,5 +1,6 @@
 import tkinter as tk
 from equations import AstronomyEquations
+from scrollBarTest import VerticalScrolledFrame
 
 # Astronomy Class Declaration
 class AstronomyInterface:
@@ -86,19 +87,31 @@ class AstronomyInterface:
         )
         equationLabel.pack(in_=top, fill=tk.X)
 
-        scrolling = tk.Scrollbar(
-            bg="blue"
-        )
-        scrolling.pack(in_=middle, side=tk.RIGHT, fill=tk.Y)
+        # scrolling = tk.Scrollbar()
+        # scrolling.pack(in_=middle, side=tk.RIGHT, fill=tk.Y)
+        #
+        # mylist = tk.Listbox(self.window, yscrollcommand=scrolling.set, font=("Times 12"))
+        # astEq = AstronomyEquations()
+        # printEquations = astEq.getAllPrints()
+        # for eq in astEq.getAllPrints():
+        #     mylist.insert(tk.END, getattr(astEq, eq)())
+        #
+        # mylist.pack(in_=middle, side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # scrolling.config(command=mylist.yview)
 
-        mylist = tk.Listbox(self.window, yscrollcommand=scrolling.set, font=("Times 12"))
+        scframe = VerticalScrolledFrame(self.window)
+        scframe.pack(in_=middle, fill=tk.BOTH, expand=True)
+
         astEq = AstronomyEquations()
-        printEquations = astEq.getAllPrints()
-        for eq in astEq.getAllPrints():
-            mylist.insert(tk.END, getattr(astEq, eq)())
-
-        mylist.pack(in_=middle, side=tk.LEFT, fill=tk.BOTH, expand=True)
-        scrolling.config(command=mylist.yview)
+        lis = astEq.getAllPrints()
+        lis2 = astEq.getAllEquations()
+        for i, x in enumerate(lis):
+            btn = tk.Button(scframe.interior, height=1, width=20, relief=tk.FLAT,
+                            bg="gray99", fg="purple3",
+                            font="Dosis", text=getattr(astEq, x)(),
+                            command=lambda i=i, lis2=lis2: self.openlink(lis2[i]))
+            btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
+            # mylist.insert(tk.END, getattr(astEq, eq)())
 
         backButton = tk.Button(
             text="Back",
@@ -106,6 +119,24 @@ class AstronomyInterface:
         )
         backButton.pack(in_=bottom, fill=tk.BOTH,expand=True)
         # End create Equation
+
+    def openlink(self, eq):
+        print("sup")
+        self.destroyWidgets()
+        equationLabel = tk.Label(
+        text=eq,
+        height=2,
+        font=("Times 15 bold underline")
+        )
+        equationLabel.pack(fill=tk.X)
+
+        backButton = tk.Button(
+            text="Back",
+            command=self.createEquation
+        )
+        backButton.pack(fill=tk.BOTH, expand=True)
+    # End createEquation
+
 
     # Used to create the Data Page
     def createData(self):
@@ -168,4 +199,5 @@ class AstronomyInterface:
 
 
 # Execution Part
-ai = AstronomyInterface()
+if (__name__ == '__main__'):
+    ai = AstronomyInterface()

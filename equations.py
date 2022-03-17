@@ -52,10 +52,11 @@ class AstronomyEquations:
     def motion4Print(self):
         return "Motion -- v%s = 0.5(v%s + v%s)" % ('\u0304', self.subNums[1], self.subNums[0])
 
-ae = AstronomyEquations()
-print("EQUATIONS")
-em = ae.getAllEquations()
-print("PRINTS")
-#pm = ae.getAllPrints()
-for eq in ae.getAllPrints():
-    print(getattr(ae, eq)())
+if (__name__ == '__main__'):
+    ae = AstronomyEquations()
+    print("EQUATIONS")
+    em = ae.getAllEquations()
+    print("PRINTS")
+    #pm = ae.getAllPrints()
+    for eq in ae.getAllPrints():
+        print(getattr(ae, eq)())
