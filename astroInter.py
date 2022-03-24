@@ -1,6 +1,7 @@
 import tkinter as tk
 from equations import AstronomyEquations
 from scrollBarTest import VerticalScrolledFrame
+from inspect import signature
 
 # Astronomy Class Declaration
 class AstronomyInterface:
@@ -110,7 +111,7 @@ class AstronomyInterface:
             btn = tk.Button(scframe.interior, height=1, width=20, relief=tk.FLAT,
                             bg="gray99", fg="purple3",
                             font="Dosis", text=getattr(astEq, x)(),
-                            command=lambda i=i, lis2=lis2: self.openlink(lis2[i]))
+                            command=lambda i=i, lis2=lis2: self.openEquation(lis2[i]))
             btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
             # mylist.insert(tk.END, getattr(astEq, eq)())
 
@@ -121,21 +122,42 @@ class AstronomyInterface:
         backButton.pack(in_=bottom, fill=tk.BOTH,expand=True)
         # End create Equation
 
-    def openlink(self, eq):
-        print("sup")
+    def openEquation(self, eq):
         self.destroyWidgets()
-        equationLabel = tk.Label(
-        text=eq,
+        top = tk.Frame()
+        middle = tk.Frame()
+        bottom = tk.Frame()
+        top.pack(side=tk.TOP, fill = tk.X)
+        middle.pack(fill=tk.BOTH, expand=True)
+        bottom.pack(side=tk.BOTTOM, fill=tk.X)
+        # top.grid(row=0,column=0,sticky=tk.EW)
+        # middle.grid(row=1,column=0,sticky=tk.EW)
+        # bottom.grid(row=2,column=0,sticky=tk.EW)
+        # top.grid_rowconfigure(0, weight=1)
+        # top.grid_columnconfigure(0, weight=1)
+
+        ae = AstronomyEquations()
+        topLabel = tk.Label(
+        text=getattr(ae, eq[0:len(eq)-8] + "Print")(),
         height=2,
         font=("Times 15 bold underline")
         )
-        equationLabel.pack(fill=tk.X)
+        topLabel.pack(in_=top, fill=tk.X)
+
+        params = signature(getattr(ae, eq)).parameters
+        middle.grid_columnconfigure(1,weight=1)
+        middle.grid_rowconfigure(0,weight=1)
+        for i, param in enumerate(params):
+            paramText = tk.Label(text=param)
+            paramText.grid(in_=middle, row=i+1, column=0, padx = 10, pady=5)
+            paramEntry = tk.Entry()
+            paramEntry.grid(in_=middle, row=i+1, column=1, sticky=tk.EW)
 
         backButton = tk.Button(
             text="Back",
             command=self.createEquation
         )
-        backButton.pack(fill=tk.BOTH, expand=True)
+        backButton.pack(in_=bottom, fill=tk.BOTH, expand=True)
     # End createEquation
 
 
