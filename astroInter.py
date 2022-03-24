@@ -107,13 +107,20 @@ class AstronomyInterface:
         astEq = AstronomyEquations()
         lis = astEq.getAllPrints()
         lis2 = astEq.getAllEquations()
+        scframe.interior.grid_rowconfigure(0,weight=1)
+        scframe.interior.grid_columnconfigure(0,weight=2)
+        scframe.interior.grid_columnconfigure(1,weight=3)
         for i, x in enumerate(lis):
-            btn = tk.Button(scframe.interior, height=1, width=20, relief=tk.FLAT,
+            lblbtn = getattr(astEq, x)()
+            lbl = tk.Label(text=lblbtn[0])
+            lbl.grid(in_=scframe.interior, row=i, column=0, pady=15,padx=5,sticky=tk.EW)
+
+            btn = tk.Button(height=1, width=20, relief=tk.FLAT,
                             bg="gray99", fg="purple3",
-                            font="Dosis", text=getattr(astEq, x)(),
+                            font="Dosis", text=lblbtn[1],
                             command=lambda i=i, lis2=lis2: self.openEquation(lis2[i]))
-            btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
-            # mylist.insert(tk.END, getattr(astEq, eq)())
+            #btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
+            btn.grid(in_=scframe.interior, row=i, column=1, sticky=tk.EW)
 
         backButton = tk.Button(
             text="Back",
@@ -130,11 +137,6 @@ class AstronomyInterface:
         top.pack(side=tk.TOP, fill = tk.X)
         middle.pack(fill=tk.BOTH, expand=True)
         bottom.pack(side=tk.BOTTOM, fill=tk.X)
-        # top.grid(row=0,column=0,sticky=tk.EW)
-        # middle.grid(row=1,column=0,sticky=tk.EW)
-        # bottom.grid(row=2,column=0,sticky=tk.EW)
-        # top.grid_rowconfigure(0, weight=1)
-        # top.grid_columnconfigure(0, weight=1)
 
         ae = AstronomyEquations()
         topLabel = tk.Label(
@@ -148,10 +150,16 @@ class AstronomyInterface:
         middle.grid_columnconfigure(1,weight=1)
         middle.grid_rowconfigure(0,weight=1)
         for i, param in enumerate(params):
+            print(i)
             paramText = tk.Label(text=param)
             paramText.grid(in_=middle, row=i+1, column=0, padx = 10, pady=5)
             paramEntry = tk.Entry()
             paramEntry.grid(in_=middle, row=i+1, column=1, sticky=tk.EW)
+
+        resultText = tk.Label(text="Result")
+        resultText.grid(in_=middle, row=len(params)+1, column=0, padx=10, pady=5)
+        resultValue = tk.Entry()
+        resultValue.grid(in_=middle, row=len(params)+1, column=1, sticky=tk.EW)
 
         backButton = tk.Button(
             text="Back",

@@ -34,44 +34,44 @@ class AstronomyEquations:
     def velocityEquation(self, Displacement, Time):
         return Displacement / Time
     def velocityPrint(self):
-        return "Velocity < v = d / t >"
+        return ["Velocity", "< v = d / t >"]
     # Acceleration
     def accelerationEquation(self, Velocity, Time):
         return Velocity / Time
     def accelerationPrint(self):
-        return "Acceleration < a = v / t >"
+        return ["Acceleration", "< a = v / t >"]
     # Motion Equations
     def motion1Equation(self, Initial_Velocity, Acceleration, Time):
         return Initial_Velocity + Acceleration*Time
     def motion1Print(self):
-        return "Motion < v%s = v%s + at >" % (self.subNums[1], self.subNums[0])
+        return ["Motion", "< v%s = v%s + at >" % (self.subNums[1], self.subNums[0])]
     def motion2Equation(self, Initial_Position, Initial_Velocity, Acceleration, Time):
         return Initial_Position + Initial_Velocity*Time + 0.5*Acceleration*Time**2
     def motion2Print(self):
-        return "Motion < d%s = d%s + v%st + 0.5at%s >" % (self.subNums[1], self.subNums[0], self.subNums[0], self.supNums[2])
+        return ["Motion", "< d%s = d%s + v%st + 0.5at%s >" % (self.subNums[1], self.subNums[0], self.subNums[0], self.supNums[2])]
     def motion3Equation(self, Initial_Velocity, Acceleration, Final_Position, Initial_Position):
         return Initial_Velocity**2 + 2*Acceleration * (Final_Position - Initial_Position)
     def motion3Print(self):
-        return "Motion < v%s%s = v%s%s + 2a(d%s - d%s) >" % (self.subNums[1], self.supNums[2], self.subNums[0], self.supNums[2], self.subNums[1], self.subNums[0])
+        return ["Motion", "< v%s%s = v%s%s + 2a(d%s - d%s) >" % (self.subNums[1], self.supNums[2], self.subNums[0], self.supNums[2], self.subNums[1], self.subNums[0])]
     #@staticmethod
     def motion4Equation(self, Final_Velocity, Initial_Velocity):
         return 1/2 * (Final_Velocity + Initial_Velocity)
     def motion4Print(self):
-        return "Motion < v%s = 0.5(v%s + v%s) >" % ('\u0304', self.subNums[1], self.subNums[0])
+        return ["Motion", "< v%s = 0.5(v%s + v%s) >" % ('\u0304', self.subNums[1], self.subNums[0])]
 
     # Astronomy Equations
     def astDistance1Equation(self, alpha, d):
         return alpha * d / 206265
     def astDistance1Print(self):
-        return 'AST Distance < D = %sd / 206265 >' % (self.greek['a'])
+        return ['AST Distance', '< D = %sd / 206265 >' % (self.greek['a'])]
     def astDistance2Equation(self, alpha, D):
         return 206265 * D / alpha
     def astDistance2Print(self):
-        return 'AST Distance < d = 206265D / %s >' % (self.greek['a'])
+        return ['AST Distance', '< d = 206265D / %s >' % (self.greek['a'])]
     def astDistance3Equation(self, theta):
         return 1 / theta
     def astDistance4Print(self):
-        return 'AST Distance < d = 1 / %s >' % (self.greek['o'])
+        return ['AST Distance', '< d = 1 / %s >' % (self.greek['o'])]
 
 
 
