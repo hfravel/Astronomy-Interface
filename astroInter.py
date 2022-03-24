@@ -44,13 +44,24 @@ class AstronomyInterface:
         greeting.pack(fill=tk.X)
 
         # Loops through our list to create the buttons
+        #def createPage(self, title, backFunc, middleFunc):
+        #command = lambda i=i, lis2=lis2: self.openEquation(lis2[i])
+
         buttons = []
         for i in range(len(self.mainButtons)):
-            buttons.append(tk.Button(
-                text=self.mainButtons[i],
-                command=self.mainFuncs[i],
-                height=2, anchor="w"
-            ))
+            if (self.mainButtons[i] == "5) Simulation"):
+                buttons.append(tk.Button(
+                    text=self.mainButtons[i],
+                    command = lambda title="Simulation", backFunc="createMain", middleFunc="createSim":
+                        self.createPage(title, backFunc, middleFunc),
+                    height=2, anchor="w"
+                ))
+            else:
+                buttons.append(tk.Button(
+                    text=self.mainButtons[i],
+                    command=self.mainFuncs[i],
+                    height=2, anchor="w"
+                ))
             buttons[i].pack(fill=tk.BOTH,
                             expand=True, padx=10, pady=10)
         # End of createMain
@@ -226,6 +237,41 @@ class AstronomyInterface:
         )
         backButton.pack(fill=tk.BOTH, expand=True)
         # End createSimulation
+
+    def createSim(self, midFrame):
+        # Create the simulation
+        canvas = tk.Canvas(width=200, height = 200, bg="black")
+        canvas.pack(in_=midFrame)
+
+    # Start of the basic page creation
+    def createPage(self, title, backFunc, middleFunc):
+        self.destroyWidgets()
+        top = tk.Frame()
+        middle = tk.Frame()
+        bottom = tk.Frame()
+        top.pack(side=tk.TOP, fill = tk.X)
+        middle.pack(fill=tk.BOTH, expand=True)
+        bottom.pack(side=tk.BOTTOM, fill=tk.X)
+
+        topLabel = tk.Label(
+            text=title,
+            height=2,
+            font=("Times 15 bold underline")
+        )
+        topLabel.pack(in_=top, fill=tk.X)
+
+        # This is where the middle goes
+        getattr(self, middleFunc)(middle)
+        # End the middle part
+
+        # Creates the back Button
+        backButton = tk.Button(
+            text="Back",
+            command=getattr(self, backFunc)
+        )
+        backButton.pack(fill=tk.BOTH, expand=True)
+        # End createSimulation
+
 
 
 
