@@ -21,6 +21,7 @@ class AstronomyInterface:
 
         # Create the astonromy interface window
         self.window = tk.Tk(className=self.title)
+        self.window.geometry("500x500")
         self.createMain()
         #self.createEquation()
         self.window.mainloop()
@@ -74,21 +75,20 @@ class AstronomyInterface:
 
         params = signature(getattr(ae, eq)).parameters
         middle.grid_columnconfigure(1,weight=1)
-        middle.grid_rowconfigure(0,weight=1)
         for i, param in enumerate(params):
-            print(i)
+            #middle.grid_rowconfigure(i, weight=1)
             paramText = tk.Label(text=param)
-            paramText.grid(in_=middle, row=i+1, column=0, padx = 10, pady=5)
+            paramText.grid(in_=middle, row=i, column=0, padx = 10, pady=5)
             paramEntry = tk.Entry()
-            paramEntry.grid(in_=middle, row=i+1, column=1, sticky=tk.EW)
+            paramEntry.grid(in_=middle, row=i, column=1, padx=10, sticky="NEW")
 
         resultText = tk.Label(text="Result")
-        resultText.grid(in_=middle, row=len(params)+1, column=0, padx=10, pady=5)
+        resultText.grid(in_=middle, row=len(params), column=0, padx=10, pady=5)
         resultValue = tk.Entry()
-        resultValue.grid(in_=middle, row=len(params)+1, column=1, sticky=tk.EW)
+        resultValue.grid(in_=middle, row=len(params), column=1, padx=10, sticky=tk.EW)
 
         backButton = tk.Button(
-            text="Back",
+            text="Back", height=2,
             command=lambda: self.createPage("Equation", "createMain", "createEquation")
         )
         backButton.pack(in_=bottom, fill=tk.BOTH, expand=True)
@@ -104,6 +104,10 @@ class AstronomyInterface:
         middle.pack(fill=tk.BOTH, expand=True)
         bottom.pack(side=tk.BOTTOM, fill=tk.X)
 
+        # This is where the middle goes
+        getattr(self, middleFunc)(middle)
+        # End the middle part
+
         topLabel = tk.Label(
             text=title,
             height=2,
@@ -111,16 +115,12 @@ class AstronomyInterface:
         )
         topLabel.pack(in_=top, fill=tk.X)
 
-        # This is where the middle goes
-        getattr(self, middleFunc)(middle)
-        # End the middle part
-
         # Creates the back Button
         backButton = tk.Button(
-            text="Back",
+            text="Back", height=2,
             command=getattr(self, backFunc)
         )
-        backButton.pack(fill=tk.BOTH, expand=True)
+        backButton.pack(in_=bottom, fill=tk.X, expand=True)
     # End createPage
 
     # Used to create the Help page
@@ -130,8 +130,8 @@ class AstronomyInterface:
 
     # Used to create the Equation page
     def createEquation(self, middle):
-        scframe = VerticalScrolledFrame(self.window)
-        scframe.pack(in_=middle, fill=tk.BOTH, expand=True)
+        scframe = VerticalScrolledFrame(middle)
+        scframe.pack(in_=middle, side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
         astEq = AstronomyEquations()
         lis = astEq.getAllPrints()
@@ -150,6 +150,9 @@ class AstronomyInterface:
                             command=lambda i=i, lis2=lis2: self.openEquation(lis2[i]))
             #btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
             btn.grid(in_=scframe.interior, row=i, column=1, sticky=tk.EW)
+
+        btn=tk.Button(text="Switch View Button")
+        btn.pack(in_=middle, side=tk.TOP,fill=tk.X)
     # End createEquation
 
     # Used to create the Data page
