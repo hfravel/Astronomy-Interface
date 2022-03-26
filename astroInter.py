@@ -13,6 +13,7 @@ class AstronomyInterface:
                             "Data",
                             "Learn",
                             "Simulation"]
+        self.ae = AstronomyEquations()
         # self.mainFuncs = [self.createHelp,
         #                   self.createEquation,
         #                   self.createData,
@@ -75,17 +76,22 @@ class AstronomyInterface:
 
         params = signature(getattr(ae, eq)).parameters
         middle.grid_columnconfigure(1,weight=1)
+        paramEntries = []
         for i, param in enumerate(params):
             #middle.grid_rowconfigure(i, weight=1)
             paramText = tk.Label(text=param)
             paramText.grid(in_=middle, row=i, column=0, padx = 10, pady=5)
-            paramEntry = tk.Entry()
-            paramEntry.grid(in_=middle, row=i, column=1, padx=10, sticky="NEW")
+            paramEntries.append(tk.Entry())
+            paramEntries[i].grid(in_=middle, row=i, column=1, padx=10, sticky="NEW")
 
         resultText = tk.Label(text="Result")
-        resultText.grid(in_=middle, row=len(params), column=0, padx=10, pady=5)
-        resultValue = tk.Entry()
-        resultValue.grid(in_=middle, row=len(params), column=1, padx=10, sticky=tk.EW)
+        resultText.grid(in_=middle, row=len(params)+1, column=0, padx=10, pady=5)
+        resultEntry = tk.Entry()
+        calculateButton = tk.Button(text="Calculate",
+                                    command = lambda pE=paramEntries, rE=resultEntry, eq=eq: self.setText(pE, rE, eq))
+        calculateButton.grid(in_=middle, row=len(params), column=0, columnspan=2, padx=10, pady=5)
+        resultEntry.grid(in_=middle, row=len(params)+1, column=1, padx=10, sticky=tk.EW)
+
 
         backButton = tk.Button(
             text="Back", height=2,
@@ -93,6 +99,16 @@ class AstronomyInterface:
         )
         backButton.pack(in_=bottom, fill=tk.BOTH, expand=True)
     # End openEquation
+
+    def setText(self, paramEntries, resultEntry, equation):
+        param1 = float(paramEntries[0].get())
+        param2 = float(paramEntries[1].get())
+        #params = []
+        #for i, p in enumerate(paramEntries):
+        #    params[i] = float(p.get())
+        resultEntry.delete(0,len(resultEntry.get()))
+        resultEntry.insert(0, getattr(self.ae, equation)(param1, param2))
+    # End
 
     # Start of the basic page creation
     def createPage(self, title, backFunc, middleFunc):
