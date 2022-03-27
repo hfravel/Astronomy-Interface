@@ -67,30 +67,32 @@ class AstronomyInterface:
         bottom.pack(side=tk.BOTTOM, fill=tk.X)
 
         ae = AstronomyEquations()
+        printEq = getattr(ae, eq[0:len(eq)-8] + "Print")()
         topLabel = tk.Label(
-        text=getattr(ae, eq[0:len(eq)-8] + "Print")(),
-        height=2,
-        font=("Times 15 bold underline")
+            text=printEq[0] + "\n" + printEq[1],
+            height=2,
+            font=("Times 15 bold underline")
         )
         topLabel.pack(in_=top, fill=tk.X)
 
-        params = signature(getattr(ae, eq)).parameters
         middle.grid_columnconfigure(1,weight=1)
         paramEntries = []
-        for i, param in enumerate(params):
+        i = 0
+        for param in printEq[2]:
             #middle.grid_rowconfigure(i, weight=1)
             paramText = tk.Label(text=param)
             paramText.grid(in_=middle, row=i, column=0, padx = 10, pady=5)
             paramEntries.append(tk.Entry())
             paramEntries[i].grid(in_=middle, row=i, column=1, padx=10, sticky="NEW")
+            i+=1
 
         resultText = tk.Label(text="Result")
-        resultText.grid(in_=middle, row=len(params)+1, column=0, padx=10, pady=5)
+        resultText.grid(in_=middle, row=i+1, column=0, padx=10, pady=5)
         resultEntry = tk.Entry()
         calculateButton = tk.Button(text="Calculate",
-                                    command = lambda pE=paramEntries, rE=resultEntry, eq=eq: self.setText(pE, rE, eq))
-        calculateButton.grid(in_=middle, row=len(params), column=0, columnspan=2, padx=10, pady=5)
-        resultEntry.grid(in_=middle, row=len(params)+1, column=1, padx=10, sticky=tk.EW)
+                                    command = lambda pE=paramEntries, rE=resultEntry, eq=eq: self.calculate(pE, rE, eq))
+        calculateButton.grid(in_=middle, row=i, column=0, columnspan=2, padx=10, pady=5)
+        resultEntry.grid(in_=middle, row=i+1, column=1, padx=10, sticky=tk.EW)
 
 
         backButton = tk.Button(
@@ -100,14 +102,19 @@ class AstronomyInterface:
         backButton.pack(in_=bottom, fill=tk.BOTH, expand=True)
     # End openEquation
 
-    def setText(self, paramEntries, resultEntry, equation):
-        param1 = float(paramEntries[0].get())
-        param2 = float(paramEntries[1].get())
-        #params = []
-        #for i, p in enumerate(paramEntries):
-        #    params[i] = float(p.get())
+    def calculate(self, paramEntries, resultEntry, equation):
+        numParams = len(paramEntries)
         resultEntry.delete(0,len(resultEntry.get()))
-        resultEntry.insert(0, getattr(self.ae, equation)(param1, param2))
+
+        params = []
+        i=0
+        for entry in paramEntries:
+            params.append(float(entry.get()))
+        resultEntry.insert(0, getattr(self.ae, equation)(params))
+
+        # param1 = float(paramEntries[0].get())
+        # if (numParams == 1):
+        #     resultEntry.insert(0, getattr(self.ae, equation)(param1))
     # End
 
     # Start of the basic page creation

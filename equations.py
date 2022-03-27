@@ -31,47 +31,82 @@ class AstronomyEquations:
     # Physics Equations
 
     # Velocity
-    def velocityEquation(self, Displacement, Time):
-        return Displacement / Time
+    # values[0] = Displacement
+    # values[1] = Time
+    def velocityEquation(self, values):
+        return values[0] / values[1]
     def velocityPrint(self):
-        return ["Velocity", "v = d / t"]
+        return ["Velocity", "v = d / t", ["Displacement", "Time"]]
     # Acceleration
-    def accelerationEquation(self, Velocity, Time):
-        return Velocity / Time
+    # values[0] = Velocity
+    # values[1] = Time
+    def accelerationEquation(self, values):
+        return values[0] / values[1]
     def accelerationPrint(self):
-        return ["Acceleration", "a = v / t"]
+        return ["Acceleration", "a = v / t", ["Velocity", "Time"]]
     # Motion Equations
-    def motion1Equation(self, Initial_Velocity, Acceleration, Time):
-        return Initial_Velocity + Acceleration*Time
+    # values[0] = Initial_Velocity
+    # values[1] = Acceleration
+    # values[2] = Time
+    def motion1Equation(self, values):
+        return values[0] + values[1] * values[2]
     def motion1Print(self):
-        return ["Motion", "v%s = v%s + at" % (self.subNums[1], self.subNums[0])]
-    def motion2Equation(self, Initial_Position, Initial_Velocity, Acceleration, Time):
-        return Initial_Position + Initial_Velocity*Time + 0.5*Acceleration*Time**2
+        return ["Motion",
+                "v%s = v%s + at" % (self.subNums[1], self.subNums[0]),
+                ["Initial_Velocity", "Acceleration", "Time"]]
+    # values[0] = Initial Position
+    # values[1] = Initial Velocity
+    # values[2] = Acceleration
+    # values[3] = Time
+    def motion2Equation(self, values):
+        return values[0] + values[1]*values[3] + 0.5 * values[2] * values[3]**2
     def motion2Print(self):
-        return ["Motion", "d%s = d%s + v%st + 0.5at%s" % (self.subNums[1], self.subNums[0], self.subNums[0], self.supNums[2])]
+        return ["Motion",
+                "d%s = d%s + v%st + 0.5at%s" % (self.subNums[1], self.subNums[0], self.subNums[0], self.supNums[2]),
+                ["Initial_Position", "Initial_Velocity", "Acceleration", "Time"]]
+    # values[0] = Initial Velocity
+    # values[1] = Acceleration
+    # values[2] = Final Position
+    # values[2] = Initial Position
     def motion3Equation(self, Initial_Velocity, Acceleration, Final_Position, Initial_Position):
-        return Initial_Velocity**2 + 2*Acceleration * (Final_Position - Initial_Position)
+        return values[0]**2 + 2*values[1] * (values[2] - values[3])
     def motion3Print(self):
-        return ["Motion", "v%s%s = v%s%s + 2a(d%s - d%s)" % (self.subNums[1], self.supNums[2], self.subNums[0], self.supNums[2], self.subNums[1], self.subNums[0])]
-    #@staticmethod
-    def motion4Equation(self, Final_Velocity, Initial_Velocity):
-        return 1/2 * (Final_Velocity + Initial_Velocity)
+        return ["Motion",
+                "v%s%s = v%s%s + 2a(d%s - d%s)" % (self.subNums[1], self.supNums[2], self.subNums[0], self.supNums[2], self.subNums[1], self.subNums[0]),
+                ["Initial_Velocity", "Acceleration", "Final_Position", "Initial_Position"]]
+    # values[0] = Final Velocity
+    # values[1] = Initial Velocity
+    def motion4Equation(self, values):
+        return 0.5 * (values[0] + values[1])
     def motion4Print(self):
-        return ["Motion", "v%s = 0.5(v%s + v%s)" % ('\u0304', self.subNums[1], self.subNums[0])]
+        return ["Motion",
+                "v%s = 0.5(v%s + v%s)" % ('\u0304', self.subNums[1], self.subNums[0]),
+                ["Final_Velocity", "Initial_Velocity"]]
 
     # Astronomy Equations
-    def astDistance1Equation(self, alpha, d):
-        return alpha * d / 206265
+    # values[0] = alpha
+    # values[1] = d
+    def astDistance1Equation(self, values):
+        return values[0] * values[1] / 206265
     def astDistance1Print(self):
-        return ['AST Distance', 'D = %sd / 206265' % (self.greek['a'])]
-    def astDistance2Equation(self, alpha, D):
-        return 206265 * D / alpha
+        return ["AST Distance",
+                "D = %sd / 206265" % (self.greek['a']),
+                ["alpha", "d"]]
+    # values[0] = alpha
+    # values[1] = D
+    def astDistance2Equation(self, values):
+        return 206265 * values[1] / values[0]
     def astDistance2Print(self):
-        return ['AST Distance', 'd = 206265D / %s' % (self.greek['a'])]
-    def astDistance3Equation(self, theta):
-        return 1 / theta
+        return ["AST Distance",
+                "d = 206265D / %s" % (self.greek['a']),
+                ["alpha", "D"]]
+    # values[0] = theta
+    def astDistance3Equation(self, values):
+        return 1 / values[0]
     def astDistance3Print(self):
-        return ['AST Distance', 'd = 1 / %s' % (self.greek['o'])]
+        return ["AST Distance",
+                "d = 1 / %s" % (self.greek['o']),
+                ["theta"]]
 
 
 
