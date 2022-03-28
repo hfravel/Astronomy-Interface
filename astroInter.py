@@ -83,27 +83,56 @@ class AstronomyInterface:
         scframe = VerticalScrolledFrame(middle)
         scframe.pack(in_=middle, side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
-        astEq = AstronomyEquations()
-        lis = astEq.getAllPrints()
-        lis2 = astEq.getAllEquations()
         scframe.interior.grid_rowconfigure(0,weight=1)
         scframe.interior.grid_columnconfigure(0,weight=2)
         scframe.interior.grid_columnconfigure(1,weight=3)
-        for i, x in enumerate(lis):
-            lblbtn = getattr(astEq, x)()
-            lbl = tk.Label(text=lblbtn[0])
-            lbl.grid(in_=scframe.interior, row=i, column=0, pady=15,padx=5,sticky=tk.EW)
 
-            btn = tk.Button(height=1, width=20, relief=tk.FLAT,
-                            bg="gray99", fg="purple3",
-                            font="Dosis", text=lblbtn[1],
-                            command=lambda i=i, lis2=lis2: self.openEquation(lis2[i]))
-            #btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
-            btn.grid(in_=scframe.interior, row=i, column=1, sticky=tk.EW)
+        currRow = 0
+        # Create physics equation buttons in scrollframe
+        currRow = self.addEquationsToFrame(scframe.interior, "Physics Equations", currRow)
+        # Create astronomy equation buttons in scrollframe
+        currRow = self.addEquationsToFrame(scframe.interior, "Astronomy Equations", currRow)
 
-        btn=tk.Button(text="Switch View Button")
-        btn.pack(in_=middle, side=tk.TOP,fill=tk.X)
+        switchButton=tk.Button(text="Switch View Button")
+        switchButton.pack(in_=middle, side=tk.TOP,fill=tk.X)
     # End createEquation
+
+    # Adds the equationType to scrollFrame starting at currRow
+    # If equationType = "Physics Equations" add physics equations to scrollFrame
+    # Else add astronomy equations to scrollFrame
+    def addEquationsToFrame(self, scrollFrame, equationType, currRow):
+        equations=[]
+        prints=[]
+        if (equationType == "Physics Equations"):
+            equations = self.ae.getPhyEquations()
+            prints = self.ae.getPhyPrints()
+        else:
+            equations = self.ae.getAstEquations()
+            prints = self.ae.getAstPrints()
+
+        typeLabel = tk.Label(
+            text=equationType,
+            height=2,
+            font=("Times 15 bold underline")
+        )
+        typeLabel.grid(in_=scrollFrame, row=currRow, column=0, pady=15, padx=5, columnspan=2, sticky=tk.EW)
+        currRow+=1
+
+        for i in range(len(equations)):
+            aboutEquation = getattr(self.ae, prints[i])()
+            equationName = tk.Label(text=aboutEquation[0])
+            equationName.grid(in_=scrollFrame, row=currRow, column=0, pady=15,padx=5,sticky=tk.EW)
+
+            equationButton = tk.Button(height=1, width=20, relief=tk.FLAT,
+                            bg="gray99", fg="purple3",
+                            font="Dosis", text=aboutEquation[1],
+                            command=lambda eq=equations[i]: self.openEquation(eq))
+            #btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
+            equationButton.grid(in_=scrollFrame, row=currRow, column=1, sticky=tk.EW)
+            currRow+=1
+
+        return currRow
+    # End addEquationsToFrame
 
     # Opens a specific a page for a specific equation
     def openEquation(self, eq):

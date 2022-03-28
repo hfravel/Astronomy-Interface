@@ -14,43 +14,68 @@ class AstronomyEquations:
         self.greek = {'a': '\u03B1', 'o': '\u03B8'}
         # End init
 
-    # Returns a list of all the equation methods
-    def getAllEquations(self):
-        equationMethods = [method for method in dir(AstronomyEquations) if (method.startswith('__') or method.endswith('Print')) is False]
-        equationMethods.remove('getAllEquations')
-        equationMethods.remove('getAllPrints')
-        return equationMethods
+    # # Returns a list of all the equation methods
+    # def getAllEquations(self):
+    #     equationMethods = [method for method in dir(AstronomyEquations) if (method.startswith('__') or method.endswith('Print')) is False]
+    #     equationMethods.remove('getAllEquations')
+    #     equationMethods.remove('getAllPrints')
+    #     return equationMethods
 
-    #Returns a list of all the equation print methods
-    def getAllPrints(self):
-        printMethods = [method for method in dir(AstronomyEquations) if (method.startswith('__') or method.endswith('Equation')) is False]
-        printMethods.remove('getAllEquations')
-        printMethods.remove('getAllPrints')
-        return printMethods
+    # Returns a list of all the physics equation methods
+    def getPhyEquations(self):
+        equationMethods = [method for method in dir(AstronomyEquations) if (method.startswith('phy') and method.endswith('Equation'))]
+        return equationMethods
+    # End getPhyEquations
+
+    # Returns a list of all the physics equation methods
+    def getPhyPrints(self):
+        equationMethods = [method for method in dir(AstronomyEquations) if (method.startswith('phy') and method.endswith('Print'))]
+        return equationMethods
+    # End getPhyEquations
+
+    # Returns a list of all the physics equation methods
+    def getAstEquations(self):
+        equationMethods = [method for method in dir(AstronomyEquations) if (method.startswith('ast') and method.endswith('Equation'))]
+        return equationMethods
+    # End getPhyEquations
+
+    # Returns a list of all the physics equation methods
+    def getAstPrints(self):
+        equationMethods = [method for method in dir(AstronomyEquations) if (method.startswith('ast') and method.endswith('Print'))]
+        return equationMethods
+    # End getPhyEquations
+
+    # #Returns a list of all the equation print methods
+    # def getAllPrints(self):
+    #     printMethods = [method for method in dir(AstronomyEquations) if (method.startswith('__') or method.endswith('Equation')) is False]
+    #     printMethods.remove('getAllEquations')
+    #     printMethods.remove('getAllPrints')
+    #     return printMethods
+    # # End get
 
     # Physics Equations
 
     # Velocity
     # values[0] = Displacement
     # values[1] = Time
-    def velocityEquation(self, values):
+    def phyVelocityEquation(self, values):
         return values[0] / values[1]
-    def velocityPrint(self):
+    def phyVelocityPrint(self):
         return ["Velocity", "v = d / t", ["Displacement", "Time"]]
     # Acceleration
     # values[0] = Velocity
     # values[1] = Time
-    def accelerationEquation(self, values):
+    def phyAccelerationEquation(self, values):
         return values[0] / values[1]
-    def accelerationPrint(self):
+    def phyAccelerationPrint(self):
         return ["Acceleration", "a = v / t", ["Velocity", "Time"]]
     # Motion Equations
     # values[0] = Initial_Velocity
     # values[1] = Acceleration
     # values[2] = Time
-    def motion1Equation(self, values):
+    def phyMotion1Equation(self, values):
         return values[0] + values[1] * values[2]
-    def motion1Print(self):
+    def phyMotion1Print(self):
         return ["Motion",
                 "v%s = v%s + at" % (self.subNums[1], self.subNums[0]),
                 ["Initial_Velocity", "Acceleration", "Time"]]
@@ -58,9 +83,9 @@ class AstronomyEquations:
     # values[1] = Initial Velocity
     # values[2] = Acceleration
     # values[3] = Time
-    def motion2Equation(self, values):
+    def phyMotion2Equation(self, values):
         return values[0] + values[1]*values[3] + 0.5 * values[2] * values[3]**2
-    def motion2Print(self):
+    def phyMotion2Print(self):
         return ["Motion",
                 "d%s = d%s + v%st + 0.5at%s" % (self.subNums[1], self.subNums[0], self.subNums[0], self.supNums[2]),
                 ["Initial_Position", "Initial_Velocity", "Acceleration", "Time"]]
@@ -68,17 +93,17 @@ class AstronomyEquations:
     # values[1] = Acceleration
     # values[2] = Final Position
     # values[2] = Initial Position
-    def motion3Equation(self, Initial_Velocity, Acceleration, Final_Position, Initial_Position):
+    def phyMotion3Equation(self, Initial_Velocity, Acceleration, Final_Position, Initial_Position):
         return values[0]**2 + 2*values[1] * (values[2] - values[3])
-    def motion3Print(self):
+    def phyMotion3Print(self):
         return ["Motion",
                 "v%s%s = v%s%s + 2a(d%s - d%s)" % (self.subNums[1], self.supNums[2], self.subNums[0], self.supNums[2], self.subNums[1], self.subNums[0]),
                 ["Initial_Velocity", "Acceleration", "Final_Position", "Initial_Position"]]
     # values[0] = Final Velocity
     # values[1] = Initial Velocity
-    def motion4Equation(self, values):
+    def phyMtion4Equation(self, values):
         return 0.5 * (values[0] + values[1])
-    def motion4Print(self):
+    def phyMotion4Print(self):
         return ["Motion",
                 "v%s = 0.5(v%s + v%s)" % ('\u0304', self.subNums[1], self.subNums[0]),
                 ["Final_Velocity", "Initial_Velocity"]]
@@ -112,13 +137,21 @@ class AstronomyEquations:
 
 if (__name__ == '__main__'):
     ae = AstronomyEquations()
-    #print("EQUATIONS")
-    em = ae.getAllEquations()
-    #print("PRINTS")
-    #pm = ae.getAllPrints()
-    for eq in ae.getAllPrints():
-        pass
-        #print(getattr(ae, eq)())
-    str1 = "motion4Equation"
-    print(len(signature(getattr(ae, str1)).parameters))
-    print(len(signature(ae.motion4Equation).parameters))
+
+    pe = ae.getPhyEquations()
+    pp = ae.getPhyPrints()
+    aeq = ae.getAstEquations()
+    ap = ae.getAstPrints()
+
+    print("PHY Equations")
+    for e in pe:
+        print(e)
+    print("PHY Prints")
+    for e in pp:
+        print(e)
+    print("AST Equations")
+    for e in aeq:
+        print(e)
+    print("AST Prints")
+    for e in ap:
+        print(e)
