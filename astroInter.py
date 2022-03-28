@@ -15,7 +15,7 @@ class AstronomyInterface:
                             "Simulation"]
         self.ae = AstronomyEquations()
         self.backToMain = lambda: self.createPage(self.title, "", "createMain")
-        #self.backToEqua = lambda: self.createPage("Equation", self.backToMain, "createEquation")
+        self.backToEqua = lambda: self.createPage("Equation", self.backToMain, "createEquation")
 
         # Create the astonromy interface window
         self.window = tk.Tk(className=self.title)
@@ -32,19 +32,21 @@ class AstronomyInterface:
 
     # Creates the main page
     def createMain(self, middle):
-        buttons = []
-        for i in range(len(self.mainButtons)):
-            buttons.append(tk.Button(
-                text=str(i+1) + ") " + self.mainButtons[i],
-                command = lambda pageName=self.mainButtons[i]:
+        btnNum = 1
+        for mainBtn in self.mainButtons:
+            currButton = tk.Button(
+                text=str(btnNum) + ") " + mainBtn,
+                command = lambda pageName=mainBtn:
                     self.createPage(pageName, self.backToMain, "create"+pageName),
                 height=2, anchor="w"
-            ))
-            buttons[i].pack(in_=middle,fill=tk.BOTH, expand=True, padx=10, pady=10)
+            )
+            currButton.pack(in_=middle,fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+            btnNum+=1
     # End of createMain
 
     # Start of the basic page creation
-    def createPage(self, title, backFunc, middleFunc):
+    def createPage(self, title, backFunc, middleFunc, eq=""):
         self.destroyWidgets()
         top = tk.Frame()
         middle = tk.Frame()
@@ -54,7 +56,10 @@ class AstronomyInterface:
         bottom.pack(side=tk.BOTTOM, fill=tk.X)
 
         # This is where the middle goes
-        getattr(self, middleFunc)(middle)
+        if eq=="":
+            getattr(self, middleFunc)(middle)
+        else:
+            getattr(self, middleFunc)(middle, eq)
         # End the middle part
 
         topLabel = tk.Label(
@@ -126,7 +131,8 @@ class AstronomyInterface:
             equationButton = tk.Button(height=1, width=20, relief=tk.FLAT,
                             bg="gray99", fg="purple3",
                             font="Dosis", text=aboutEquation[1],
-                            command=lambda eq=equations[i]: self.openEquation(eq))
+                            command=lambda pr=getattr(self.ae, prints[i])(), eq=equations[i]:
+                                self.createPage(pr[0]+"\n"+pr[1], self.backToEqua, "openEquation", eq))
             #btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
             equationButton.grid(in_=scrollFrame, row=currRow, column=1, sticky=tk.EW)
             currRow+=1
@@ -135,23 +141,26 @@ class AstronomyInterface:
     # End addEquationsToFrame
 
     # Opens a specific a page for a specific equation
-    def openEquation(self, eq):
-        self.destroyWidgets()
-        top = tk.Frame()
-        middle = tk.Frame()
-        bottom = tk.Frame()
-        top.pack(side=tk.TOP, fill = tk.X)
-        middle.pack(fill=tk.BOTH, expand=True)
-        bottom.pack(side=tk.BOTTOM, fill=tk.X)
+    def openEquation(self, middle, eq):
+        # self.destroyWidgets()
+        # top = tk.Frame()
+        # middle = tk.Frame()
+        # bottom = tk.Frame()
+        # top.pack(side=tk.TOP, fill = tk.X)
+        # middle.pack(fill=tk.BOTH, expand=True)
+        # bottom.pack(side=tk.BOTTOM, fill=tk.X)
+        #
+        # ae = AstronomyEquations()
+        # printEq = getattr(ae, eq[0:len(eq)-8] + "Print")()
+        # topLabel = tk.Label(
+        #     text=printEq[0] + "\n" + printEq[1],
+        #     height=2,
+        #     font=("Times 15 bold underline")
+        # )
+        # topLabel.pack(in_=top, fill=tk.X)
 
-        ae = AstronomyEquations()
-        printEq = getattr(ae, eq[0:len(eq)-8] + "Print")()
-        topLabel = tk.Label(
-            text=printEq[0] + "\n" + printEq[1],
-            height=2,
-            font=("Times 15 bold underline")
-        )
-        topLabel.pack(in_=top, fill=tk.X)
+
+        printEq = getattr(self.ae, eq[0:len(eq)-8] + "Print")()
 
         middle.grid_columnconfigure(1,weight=1)
         paramEntries = []
@@ -168,16 +177,17 @@ class AstronomyInterface:
         resultText.grid(in_=middle, row=i+1, column=0, padx=10, pady=5)
         resultEntry = tk.Entry()
         calculateButton = tk.Button(text="Calculate",
-                                    command = lambda pE=paramEntries, rE=resultEntry, eq=eq: self.calculate(pE, rE, eq))
+                                    command = lambda pE=paramEntries, rE=resultEntry, eq=eq:
+                                        self.calculate(pE, rE, eq))
         calculateButton.grid(in_=middle, row=i, column=0, columnspan=2, padx=10, pady=5)
         resultEntry.grid(in_=middle, row=i+1, column=1, padx=10, sticky=tk.EW)
 
 
-        backButton = tk.Button(
-            text="Back", height=2,
-            command=lambda: self.createPage("Equation", self.backToMain, "createEquation")
-        )
-        backButton.pack(in_=bottom, fill=tk.BOTH, expand=True)
+        # backButton = tk.Button(
+        #     text="Back", height=2,
+        #     command=lambda: self.createPage("Equation", self.backToMain, "createEquation")
+        # )
+        # backButton.pack(in_=bottom, fill=tk.BOTH, expand=True)
     # End openEquation
 
     # Method that calss each equation's function to calculate the result
