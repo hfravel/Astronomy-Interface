@@ -142,52 +142,26 @@ class AstronomyInterface:
 
     # Opens a specific a page for a specific equation
     def openEquation(self, middle, eq):
-        # self.destroyWidgets()
-        # top = tk.Frame()
-        # middle = tk.Frame()
-        # bottom = tk.Frame()
-        # top.pack(side=tk.TOP, fill = tk.X)
-        # middle.pack(fill=tk.BOTH, expand=True)
-        # bottom.pack(side=tk.BOTTOM, fill=tk.X)
-        #
-        # ae = AstronomyEquations()
-        # printEq = getattr(ae, eq[0:len(eq)-8] + "Print")()
-        # topLabel = tk.Label(
-        #     text=printEq[0] + "\n" + printEq[1],
-        #     height=2,
-        #     font=("Times 15 bold underline")
-        # )
-        # topLabel.pack(in_=top, fill=tk.X)
-
-
         printEq = getattr(self.ae, eq[0:len(eq)-8] + "Print")()
 
         middle.grid_columnconfigure(1,weight=1)
         paramEntries = []
-        i = 0
+        rowNum = 0
         for param in printEq[2]:
-            #middle.grid_rowconfigure(i, weight=1)
             paramText = tk.Label(text=param)
-            paramText.grid(in_=middle, row=i, column=0, padx = 10, pady=5)
+            paramText.grid(in_=middle, row=rowNum, column=0, padx = 10, pady=5)
             paramEntries.append(tk.Entry())
-            paramEntries[i].grid(in_=middle, row=i, column=1, padx=10, sticky="NEW")
-            i+=1
+            paramEntries[rowNum].grid(in_=middle, row=rowNum, column=1, padx=10, sticky="NEW")
+            rowNum+=1
 
         resultText = tk.Label(text="Result")
-        resultText.grid(in_=middle, row=i+1, column=0, padx=10, pady=5)
+        resultText.grid(in_=middle, row=rowNum+1, column=0, padx=10, pady=5)
         resultEntry = tk.Entry()
         calculateButton = tk.Button(text="Calculate",
                                     command = lambda pE=paramEntries, rE=resultEntry, eq=eq:
                                         self.calculate(pE, rE, eq))
-        calculateButton.grid(in_=middle, row=i, column=0, columnspan=2, padx=10, pady=5)
-        resultEntry.grid(in_=middle, row=i+1, column=1, padx=10, sticky=tk.EW)
-
-
-        # backButton = tk.Button(
-        #     text="Back", height=2,
-        #     command=lambda: self.createPage("Equation", self.backToMain, "createEquation")
-        # )
-        # backButton.pack(in_=bottom, fill=tk.BOTH, expand=True)
+        calculateButton.grid(in_=middle, row=rowNum, column=0, columnspan=2, padx=10, pady=5)
+        resultEntry.grid(in_=middle, row=rowNum+1, column=1, padx=10, sticky=tk.EW)
     # End openEquation
 
     # Method that calss each equation's function to calculate the result
