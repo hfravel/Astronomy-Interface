@@ -132,7 +132,7 @@ class AstronomyInterface:
                             bg="gray99", fg="purple3",
                             font="Dosis", text=aboutEquation[1],
                             command=lambda pr=getattr(self.ae, prints[i])(), eq=equations[i]:
-                                self.createPage(pr[0]+"\n"+pr[1], self.backToEqua, "openEquation", eq))
+                                self.createPage(pr[1], self.backToEqua, "openEquation", eq))
             #btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
             equationButton.grid(in_=scrollFrame, row=currRow, column=1, sticky=tk.EW)
             currRow+=1
@@ -154,7 +154,7 @@ class AstronomyInterface:
             paramEntries[rowNum].grid(in_=middle, row=rowNum, column=1, padx=10, sticky="NEW")
             rowNum+=1
 
-        resultText = tk.Label(text="Result")
+        resultText = tk.Label(text=printEq[0])
         resultText.grid(in_=middle, row=rowNum+1, column=0, padx=10, pady=5)
         resultEntry = tk.Entry()
         calculateButton = tk.Button(text="Calculate",
