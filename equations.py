@@ -10,16 +10,8 @@ class AstronomyEquations:
         self.subNums = ['\u2080','\u2081','\u2082','\u2083','\u2084','\u2085','\u2086','\u2087','\u2088','\u2089']
 
         # Greek Characters
-        # a = alpha, o = theta
-        self.greek = {'a': '\u03B1', 'o': '\u03B8'}
+        self.greek = {'alpha': '\u03B1', 'theta': '\u03B8'}
         # End init
-
-    # # Returns a list of all the equation methods
-    # def getAllEquations(self):
-    #     equationMethods = [method for method in dir(AstronomyEquations) if (method.startswith('__') or method.endswith('Print')) is False]
-    #     equationMethods.remove('getAllEquations')
-    #     equationMethods.remove('getAllPrints')
-    #     return equationMethods
 
     # Returns a list of all the physics equation methods
     def getPhyEquations(self):
@@ -45,14 +37,6 @@ class AstronomyEquations:
         return equationMethods
     # End getPhyEquations
 
-    # #Returns a list of all the equation print methods
-    # def getAllPrints(self):
-    #     printMethods = [method for method in dir(AstronomyEquations) if (method.startswith('__') or method.endswith('Equation')) is False]
-    #     printMethods.remove('getAllEquations')
-    #     printMethods.remove('getAllPrints')
-    #     return printMethods
-    # # End get
-
     # Physics Equations
 
     # Velocity
@@ -61,14 +45,18 @@ class AstronomyEquations:
     def phyVelocityEquation(self, values):
         return values[0] / values[1]
     def phyVelocityPrint(self):
-        return ["Velocity", "v = d / t", ["Displacement", "Time"]]
+        return ["Velocity",
+                "v = d / t",
+                ["Displacement", "Time"]]
     # Acceleration
     # values[0] = Velocity
     # values[1] = Time
     def phyAccelerationEquation(self, values):
         return values[0] / values[1]
     def phyAccelerationPrint(self):
-        return ["Acceleration", "a = v / t", ["Velocity", "Time"]]
+        return ["Acceleration",
+                "a = v / t",
+                ["Velocity", "Time"]]
     # Motion Equations
     # values[0] = Initial_Velocity
     # values[1] = Acceleration
@@ -109,13 +97,14 @@ class AstronomyEquations:
                 ["Final_Velocity", "Initial_Velocity"]]
 
     # Astronomy Equations
-    # values[0] = alpha
+
+    # values[0] = Angular Size (
     # values[1] = d
     def astDistance1Equation(self, values):
         return values[0] * values[1] / 206265
     def astDistance1Print(self):
         return ["AST Distance",
-                "D = %sd / 206265" % (self.greek['a']),
+                "D = %sd / 206265" % (self.greek['alpha']),
                 ["alpha", "d"]]
     # values[0] = alpha
     # values[1] = D
@@ -123,14 +112,14 @@ class AstronomyEquations:
         return 206265 * values[1] / values[0]
     def astDistance2Print(self):
         return ["AST Distance",
-                "d = 206265D / %s" % (self.greek['a']),
+                "d = 206265D / %s" % (self.greek['alpha']),
                 ["alpha", "D"]]
     # values[0] = theta
     def astDistance3Equation(self, values):
         return 1 / values[0]
     def astDistance3Print(self):
         return ["AST Distance",
-                "d = 1 / %s" % (self.greek['o']),
+                "d = 1 / %s" % (self.greek['theta']),
                 ["theta"]]
 
 

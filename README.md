@@ -16,4 +16,4 @@ Superscript & Subscript Letters: https://unicode-table.com/en/sets/superscript-a
 
 Physics Equations: https://physics.info/equations/  
 
-Test
+Astronomy Equations: https://scioly.org/wiki/images/c/c6/Formula_Sheet.pdf
