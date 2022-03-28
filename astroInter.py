@@ -14,17 +14,13 @@ class AstronomyInterface:
                             "Learn",
                             "Simulation"]
         self.ae = AstronomyEquations()
-        # self.mainFuncs = [self.createHelp,
-        #                   self.createEquation,
-        #                   self.createData,
-        #                   self.createLearn,
-        #                   self.createSimulation]
+        self.backToMain = lambda: self.createPage(self.title, "", "createMain")
+        #self.backToEqua = lambda: self.createPage("Equation", self.backToMain, "createEquation")
 
         # Create the astonromy interface window
         self.window = tk.Tk(className=self.title)
         self.window.geometry("500x500")
-        self.createMain()
-        #self.createEquation()
+        self.createPage(self.title, "", "createMain")
         self.window.mainloop()
     # End init
 
@@ -35,28 +31,81 @@ class AstronomyInterface:
     # End destroyWidgets
 
     # Creates the main page
-    def createMain(self):
-        self.destroyWidgets()
-        # Create the Astronomy Interface Title
-        greeting = tk.Label(
-            text=self.title,
-            height=2,
-            font=("Times 15 bold underline")
-        )
-        greeting.pack(fill=tk.X)
-
-        # Loops through our list to create the buttons
-
+    def createMain(self, middle):
         buttons = []
         for i in range(len(self.mainButtons)):
             buttons.append(tk.Button(
                 text=str(i+1) + ") " + self.mainButtons[i],
-                command = lambda pageName=self.mainButtons[i]: self.createPage(pageName, "createMain", "create"+pageName),
+                command = lambda pageName=self.mainButtons[i]:
+                    self.createPage(pageName, self.backToMain, "create"+pageName),
                 height=2, anchor="w"
             ))
-            buttons[i].pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+            buttons[i].pack(in_=middle,fill=tk.BOTH, expand=True, padx=10, pady=10)
     # End of createMain
 
+    # Start of the basic page creation
+    def createPage(self, title, backFunc, middleFunc):
+        self.destroyWidgets()
+        top = tk.Frame()
+        middle = tk.Frame()
+        bottom = tk.Frame()
+        top.pack(side=tk.TOP, fill = tk.X)
+        middle.pack(fill=tk.BOTH, expand=True)
+        bottom.pack(side=tk.BOTTOM, fill=tk.X)
+
+        # This is where the middle goes
+        getattr(self, middleFunc)(middle)
+        # End the middle part
+
+        topLabel = tk.Label(
+            text=title,
+            height=2,
+            font=("Times 15 bold underline")
+        )
+        topLabel.pack(in_=top, fill=tk.X)
+
+        # Creates the back Button
+        if middleFunc != "createMain":
+            backButton = tk.Button(
+                text="Back", height=2,
+                command=backFunc
+            )
+            backButton.pack(in_=bottom, fill=tk.X, expand=True)
+    # End createPage
+
+    # Used to create the Help page
+    def createHelp(self, middle):
+        print("Help")
+    # End createHelp
+
+    # Used to create the Equation page
+    def createEquation(self, middle):
+        scframe = VerticalScrolledFrame(middle)
+        scframe.pack(in_=middle, side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+
+        astEq = AstronomyEquations()
+        lis = astEq.getAllPrints()
+        lis2 = astEq.getAllEquations()
+        scframe.interior.grid_rowconfigure(0,weight=1)
+        scframe.interior.grid_columnconfigure(0,weight=2)
+        scframe.interior.grid_columnconfigure(1,weight=3)
+        for i, x in enumerate(lis):
+            lblbtn = getattr(astEq, x)()
+            lbl = tk.Label(text=lblbtn[0])
+            lbl.grid(in_=scframe.interior, row=i, column=0, pady=15,padx=5,sticky=tk.EW)
+
+            btn = tk.Button(height=1, width=20, relief=tk.FLAT,
+                            bg="gray99", fg="purple3",
+                            font="Dosis", text=lblbtn[1],
+                            command=lambda i=i, lis2=lis2: self.openEquation(lis2[i]))
+            #btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
+            btn.grid(in_=scframe.interior, row=i, column=1, sticky=tk.EW)
+
+        btn=tk.Button(text="Switch View Button")
+        btn.pack(in_=middle, side=tk.TOP,fill=tk.X)
+    # End createEquation
+
+    # Opens a specific a page for a specific equation
     def openEquation(self, eq):
         self.destroyWidgets()
         top = tk.Frame()
@@ -97,86 +146,25 @@ class AstronomyInterface:
 
         backButton = tk.Button(
             text="Back", height=2,
-            command=lambda: self.createPage("Equation", "createMain", "createEquation")
+            command=lambda: self.createPage("Equation", self.backToMain, "createEquation")
         )
         backButton.pack(in_=bottom, fill=tk.BOTH, expand=True)
     # End openEquation
 
+    # Method that calss each equation's function to calculate the result
     def calculate(self, paramEntries, resultEntry, equation):
-        numParams = len(paramEntries)
-        resultEntry.delete(0,len(resultEntry.get()))
+        try:
+            numParams = len(paramEntries)
+            resultEntry.delete(0,len(resultEntry.get()))
 
-        params = []
-        i=0
-        for entry in paramEntries:
-            params.append(float(entry.get()))
-        resultEntry.insert(0, getattr(self.ae, equation)(params))
-
-        # param1 = float(paramEntries[0].get())
-        # if (numParams == 1):
-        #     resultEntry.insert(0, getattr(self.ae, equation)(param1))
-    # End
-
-    # Start of the basic page creation
-    def createPage(self, title, backFunc, middleFunc):
-        self.destroyWidgets()
-        top = tk.Frame()
-        middle = tk.Frame()
-        bottom = tk.Frame()
-        top.pack(side=tk.TOP, fill = tk.X)
-        middle.pack(fill=tk.BOTH, expand=True)
-        bottom.pack(side=tk.BOTTOM, fill=tk.X)
-
-        # This is where the middle goes
-        getattr(self, middleFunc)(middle)
-        # End the middle part
-
-        topLabel = tk.Label(
-            text=title,
-            height=2,
-            font=("Times 15 bold underline")
-        )
-        topLabel.pack(in_=top, fill=tk.X)
-
-        # Creates the back Button
-        backButton = tk.Button(
-            text="Back", height=2,
-            command=getattr(self, backFunc)
-        )
-        backButton.pack(in_=bottom, fill=tk.X, expand=True)
-    # End createPage
-
-    # Used to create the Help page
-    def createHelp(self, middle):
-        print("Help")
-    # End createHelp
-
-    # Used to create the Equation page
-    def createEquation(self, middle):
-        scframe = VerticalScrolledFrame(middle)
-        scframe.pack(in_=middle, side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-
-        astEq = AstronomyEquations()
-        lis = astEq.getAllPrints()
-        lis2 = astEq.getAllEquations()
-        scframe.interior.grid_rowconfigure(0,weight=1)
-        scframe.interior.grid_columnconfigure(0,weight=2)
-        scframe.interior.grid_columnconfigure(1,weight=3)
-        for i, x in enumerate(lis):
-            lblbtn = getattr(astEq, x)()
-            lbl = tk.Label(text=lblbtn[0])
-            lbl.grid(in_=scframe.interior, row=i, column=0, pady=15,padx=5,sticky=tk.EW)
-
-            btn = tk.Button(height=1, width=20, relief=tk.FLAT,
-                            bg="gray99", fg="purple3",
-                            font="Dosis", text=lblbtn[1],
-                            command=lambda i=i, lis2=lis2: self.openEquation(lis2[i]))
-            #btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
-            btn.grid(in_=scframe.interior, row=i, column=1, sticky=tk.EW)
-
-        btn=tk.Button(text="Switch View Button")
-        btn.pack(in_=middle, side=tk.TOP,fill=tk.X)
-    # End createEquation
+            params = []
+            i=0
+            for entry in paramEntries:
+                params.append(float(entry.get()))
+            resultEntry.insert(0, getattr(self.ae, equation)(params))
+        except:
+            resultEntry.insert(0, "ERROR")
+    # End calculate
 
     # Used to create the Data page
     def createData(self, middle):
