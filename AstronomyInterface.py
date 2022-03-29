@@ -126,14 +126,14 @@ class AstronomyInterface:
 
         for i in range(len(equations)):
             aboutEquation = getattr(self.ae, prints[i])()
-            equationName = tk.Label(text=aboutEquation[0])
+            equationName = tk.Label(text=aboutEquation[0][0])
             equationName.grid(in_=scrollFrame, row=currRow, column=0, pady=15,padx=5,sticky=tk.EW)
 
             equationButton = tk.Button(height=1, width=20, relief=tk.FLAT,
                             bg="gray99", fg="purple3",
                             font="Dosis", text=aboutEquation[1],
-                            command=lambda pr=getattr(self.ae, prints[i])(), eq=equations[i]:
-                                self.createPage(pr[1], self.backToEqua, "openEquation", eq),
+                            command=lambda t=aboutEquation[0][0]+": "+aboutEquation[1], eq=equations[i]:
+                                self.createPage(t, self.backToEqua, "openEquation", eq),
                             cursor="hand2")
             #btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
             equationButton.grid(in_=scrollFrame, row=currRow, column=1, sticky=tk.EW)
@@ -144,27 +144,37 @@ class AstronomyInterface:
 
     # Opens a specific a page for a specific equation
     def openEquation(self, middle, eq):
+        ixpad = 15
+        xpad = 10
+        ypad = 5
+
         printEq = getattr(self.ae, eq[0:len(eq)-8] + "Print")()
 
         middle.grid_columnconfigure(1,weight=1)
         paramEntries = []
         rowNum = 0
         for param in printEq[2]:
-            paramText = tk.Label(text=param)
-            paramText.grid(in_=middle, row=rowNum, column=0, padx = 10, pady=5)
+            paramText = tk.Label(text=param, anchor=tk.E)
+            paramText.grid(in_=middle, row=rowNum, column=0,
+                           ipadx=ixpad, pady=ypad,
+                           sticky="EW")
             paramEntries.append(tk.Entry())
-            paramEntries[rowNum].grid(in_=middle, row=rowNum, column=1, padx=10, sticky="NEW")
+            paramEntries[rowNum].grid(in_=middle, row=rowNum,
+                                      column=1, padx=xpad, sticky="NEW")
             rowNum+=1
 
-        resultText = tk.Label(text=printEq[0])
-        resultText.grid(in_=middle, row=rowNum+1, column=0, padx=10, pady=5)
+        resultText = tk.Label(text=printEq[0][0]+printEq[0][1], anchor=tk.E)
+        resultText.grid(in_=middle, row=rowNum+1, column=0,
+                        pady=ypad, ipadx=ixpad)
         resultEntry = tk.Entry()
         calculateButton = tk.Button(text="Calculate",
                                     command = lambda pE=paramEntries, rE=resultEntry, eq=eq:
                                         self.calculate(pE, rE, eq),
                                     cursor="hand2")
-        calculateButton.grid(in_=middle, row=rowNum, column=0, columnspan=2, padx=10, pady=5)
-        resultEntry.grid(in_=middle, row=rowNum+1, column=1, padx=10, sticky=tk.EW)
+        calculateButton.grid(in_=middle, row=rowNum, column=1,
+                             padx=xpad, pady=ypad)
+        resultEntry.grid(in_=middle, row=rowNum+1, column=1,
+                         padx=xpad, sticky=tk.EW)
     # End openEquation
 
     # Method that calss each equation's function to calculate the result

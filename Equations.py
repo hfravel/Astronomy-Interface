@@ -50,9 +50,10 @@ class AstronomyEquations:
         return values[0] / values[1]
     # Velocity = Displacement / Time
     def phyVelocityPrint(self):
-        return ["Velocity (m/s)",
+        return [["Velocity", " (m/s):  v ="],
                 "v = x / t",
-                ["Displacement(x) (m)", "Time(t) (s)"]]
+                ["Displacement (m):  x =",
+                 "Time (s):  t ="]]
     # Acceleration
     # values[0] = Velocity
     # values[1] = Time
@@ -60,20 +61,36 @@ class AstronomyEquations:
         return values[0] / values[1]
     # Acceleration = Velocity / Time
     def phyAccelerationPrint(self):
-        return ["Acceleration (m/s^2)",
+        return [["Acceleration", " (m/s^2):  a ="],
                 "a = v / t",
-                ["Velocity (m/s)", "Time (s)"]]
+                ["Velocity (m/s):  v =", "Time (s):  t ="]]
     # Final Velocity
     # values[0] = Initial Velocity
     # values[1] = Acceleration
     # values[2] = Time
-    def phyFinalVelocityEquation(self, values):
+    def phyFinalVelocity1Equation(self, values):
         return values[0] + values[1] * values[2]
     # Final_Velocity = Initial_Velocity + Acceleration * Time
-    def phyFinalVelocityPrint(self):
-        return ["Final Velocity (m/s)",
+    def phyFinalVelocity1Print(self):
+        return [["Final Velocity", " (m/s):  v%s ="%(self.subNums[1])],
                 "v%s = v%s + at" % (self.subNums[1], self.subNums[0]),
-                ["Initial Velocity (m/s)", "Acceleration (m/s^2)", "Time (s)"]]
+                ["Initial Velocity (m/s):  v%s ="%(self.subNums[0]),
+                 "Acceleration (m/s^2):  a =",
+                 "Time (s):  t ="]]    # Final Velocity
+    # values[0] = Initial Velocity
+    # values[1] = Acceleration
+    # values[2] = Final Position
+    # values[2] = Initial Position
+    def phyFinalVelocity2Equation(self, Initial_Velocity, Acceleration, Final_Position, Initial_Position):
+        return values[0]**2 + 2*values[1] * (values[2] - values[3])
+    #
+    def phyFinalVelocity2Print(self):
+        return [["Final Velocity", " (m/s):  v%s = "%(self.subNums[1])],
+                "v%s = %s(v%s%s + 2a(x%s - x%s))" % (self.subNums[1], self.sqrt, self.subNums[0], self.supNums[2], self.subNums[1], self.subNums[0]),
+                ["Initial Velocity (m/s):  v%s = "%(self.subNums[0]),
+                 "Acceleration (m/s^2):  a =",
+                 "Initial Position (m):  x%s ="%(self.subNums[0])],
+                 "Final Position (m):  x%s ="%(self.subNums[1])]
     # Final Position
     # values[0] = Initial Position
     # values[1] = Initial Velocity
@@ -83,90 +100,84 @@ class AstronomyEquations:
         return values[0] + values[1]*values[3] + 0.5 * values[2] * values[3]**2
     # Final_Pos = Initial_Pos + Initial_Vel * Time + 1/2 * Acceleration * Time^2
     def phyFinalPositionPrint(self):
-        return ["Final Position (m)",
+        return [["Final Position", " (m):  x%s ="%(self.subNums[1])],
                 "x%s = x%s + v%st + 0.5at%s" % (self.subNums[1], self.subNums[0], self.subNums[0], self.supNums[2]),
-                ["Initial Position (m)", "Initial Velocity (m/s)", "Acceleration (m/s^2)", "Time (s)"]]
-    # Final Velocity
-    # values[0] = Initial Velocity
-    # values[1] = Acceleration
-    # values[2] = Final Position
-    # values[2] = Initial Position
-    def phyMotion3Equation(self, Initial_Velocity, Acceleration, Final_Position, Initial_Position):
-        return values[0]**2 + 2*values[1] * (values[2] - values[3])
-    #
-    def phyMotion3Print(self):
-        return ["Final Velocity (m/s)",
-                "v%s = %s(v%s%s + 2a(x%s - x%s))" % (self.subNums[1], self.sqrt, self.subNums[0], self.supNums[2], self.subNums[1], self.subNums[0]),
-                ["Initial Velocity (m/s)", "Acceleration (m/s^2)", "Final Position (m)", "Initial Position (m)"]]
+                ["Initial Position (m):  x%s ="%(self.subNums[0]),
+                 "Initial Velocity (m/s):  v%s ="%(self.subNums[0]),
+                 "Acceleration (m/s^2):  a =",
+                 "Time (s):  t ="]]
 
     # Astronomy Equations
 
     # Flux Ration
     # values[0] = Star 1's Magnitude
     # values[1] = Star 2's Magnitude
-    def astFlux1Equation(self, values):
+    def astFluxRatioEquation(self, values):
         return 2.512**(values[1] - values[0])
     # Flux_Ratio = 2.512^(Magnitude2 - Magnitude1)
-    def astFlux1Print(self):
-        return ["Flux Ratio",
+    def astFluxRatioPrint(self):
+        return [["Flux Ratio", ":  (F%s / F%s) ="%(self.subNums[1], self.subNums[2])],
                 "F%s / F%s = 2.512^(m%s - m%s)" % (self.subNums[1], self.subNums[2], self.subNums[2], self.subNums[1]),
-                ["Star 1's Magnitue", "Star 2's Magnitue"]]
+                ["Star 1's Magnitue:  m%s ="%(self.subNums[1]),
+                 "Star 2's Magnitue:  m%s ="%(self.subNums[2])]]
     # Magnitude Difference
     # values[0] = Flux Ratio (F1 / F2)
-    def astFlux2Equation(self, values):
+    def astMagDiffEquation(self, values):
         return 2.5 * math.log(values[0])
     # (Magnitude2 - Magnitude1) = 2.5 log (Flux Ratio)
-    def astFlux2Print(self):
-        return ["Magnitude Difference",
+    def astMagDiffPrint(self):
+        return [["Magnitude Difference", ":  (m%s - m%s) ="%(self.subNums[2], self.subNums[1])],
                 "(m%s - m%s) = 2.5 log(F%s / F%s)" % (self.subNums[2], self.subNums[1], self.subNums[1], self.subNums[2]),
-                ["Flux Ratio"]]
+                ["Flux Ratio:  (F%s / F%s) ="%(self.subNums[1], self.subNums[2])]]
     # Object Diameter
     # values[0] = Angular Size
     # values[1] = Object Distance
-    def astDiameterEquation(self, values):
+    def astObjectDiameterEquation(self, values):
         return values[0] * values[1] / 206265
     # Object_Diameter = Angular_Size * Object_Distance / 206265
-    def astDiameterPrint(self):
-        return ["Object's Diameter (km)",
+    def astObjectDiameterPrint(self):
+        return [["Object's Diameter", " (km):  D ="],
                 "D = %sd / 206265" % (self.greek['alpha']),
-                ["Angular Size (arc secs)", "Object's Distance (Km)"]]
+                ["Angular Size (arc secs):  %s ="%(self.greek['alpha']),
+                 "Object's Distance (Km):  d ="]]
     # Object Distance
     # values[0] = Angular Size
     # values[1] = Object Diameter
-    def astDistanceEquation(self, values):
+    def astObjectDistanceEquation(self, values):
         return 206265 * values[1] / values[0]
     # Object_Distance = 206265 * Object_Diameter / Angular_Size
-    def astDistancePrint(self):
-        return ["Object's Distance (km)",
+    def astObjectDistancePrint(self):
+        return [["Object's Distance", " (km): d ="],
                 "d = 206265D / %s" % (self.greek['alpha']),
-                ["Angular Size (arc secs)", "Object's Diameter (km)"]]
+                ["Angular Size (arc secs):  %s ="%(self.greek['alpha']),
+                 "Object's Diameter (km):  D ="]]
     # Object Distance
     # values[0] = Paralax
-    def astParalaxDistanceEquation(self, values):
+    def astObjectDistance2Equation(self, values):
         return 1 / values[0]
     # Distance = 1 / Paralax
-    def astParalaxDistancePrint(self):
-        return ["Object's Distance (km)",
+    def astObjectDistance2Print(self):
+        return [["Object's Distance", " (km):  d ="],
                 "d = 1 / p",
-                ["Paralax (arc secs)"]]
-    # Orbital Period
+                ["Paralax (arc secs):  p ="]]
+    # Orbital Period -- Kepler's Third Law
     # values[0] = Semi-major Axis
-    def astKeplersThird1Equation(self, values):
+    def astOrbitalPeriodEquation(self, values):
         return math.sqrt(values[0]**3)
     # Period = sqrt(Semi-Major_Axis^3)
-    def astKeplersThird1Print(self):
-        return ["Orbital Period (yrs)",
+    def astOrbitalPeriodPrint(self):
+        return [["Orbital Period", " (yrs):  p ="],
                 "p = %s(a%s)" % (self.sqrt, self.supNums[3]),
-                ["Semi-Major Axis (AU)"]]
-    # Semi-major Axis
+                ["Semi-Major Axis (AU):  a ="]]
+    # Semi-major Axis -- Kepler's Third Law
     # values[0] = Orbital Period
-    def astKeplersThird2Equation(self, values):
+    def astSemiMajorAxisEquation(self, values):
         return (values[0]**2)**(1./3.)
     # Period = sqrt(Semi-Major_Axis^3)
-    def astKeplersThird2Print(self):
-        return ["Semi-Major Axis (AU)",
+    def astSemiMajorAxisPrint(self):
+        return [["Semi-Major Axis", " (AU):  a ="],
                 "a = %s(p%s)" % (self.cbrt, self.supNums[2]),
-                ["Orbital Period (yrs)"]]
+                ["Orbital Period (yrs):  p ="]]
 
 
 
