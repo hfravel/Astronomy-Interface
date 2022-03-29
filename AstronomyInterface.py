@@ -1,6 +1,6 @@
 import tkinter as tk
-from equations import AstronomyEquations
-from scrollBarTest import VerticalScrolledFrame
+from Equations import AstronomyEquations
+from VerticalScrolledFrame import VerticalScrolledFrame
 from inspect import signature
 
 # Astronomy Class Declaration
@@ -168,7 +168,7 @@ class AstronomyInterface:
     def calculate(self, paramEntries, resultEntry, equation):
         try:
             numParams = len(paramEntries)
-            resultEntry.delete(0,len(resultEntry.get()))
+            resultEntry.delete(0,tk.END)
 
             params = []
             i=0

@@ -1,5 +1,5 @@
 import tkinter as tk
-from equations import AstronomyEquations
+from Equations import AstronomyEquations
 
 class VerticalScrolledFrame(tk.Frame):
     def __init__(self, parent, *args, **kw):
@@ -49,8 +49,8 @@ if (__name__ == '__main__'):
     scframe.pack()
 
     astEq = AstronomyEquations()
-    lis = astEq.getAllPrints()
-    lis2 = astEq.getAllEquations()
+    lis = astEq.getAstPrints()
+    lis2 = astEq.getAstEquations()
     for i, x in enumerate(lis):
         lbl = tk.Label(text="test")
         lbl.grid(in_ = scframe.interior, row=i, column=0)

@@ -11,6 +11,7 @@ class AstronomyEquations:
         self.subNums = ['\u2080','\u2081','\u2082','\u2083','\u2084','\u2085','\u2086','\u2087','\u2088','\u2089']
 
         self.sqrt = '\u221A'
+        self.cbrt = '\u221B'
 
         # Greek Characters
         self.greek = {'alpha': '\u03B1', 'theta': '\u03B8'}
@@ -150,13 +151,22 @@ class AstronomyEquations:
                 ["Paralax (arc secs)"]]
     # Orbital Period
     # values[0] = Semi-major Axis
-    def astKeplersThirdEquation(self, values):
+    def astKeplersThird1Equation(self, values):
         return math.sqrt(values[0]**3)
     # Period = sqrt(Semi-Major_Axis^3)
-    def astKeplersThirdPrint(self):
+    def astKeplersThird1Print(self):
         return ["Orbital Period (yrs)",
                 "p = %s(a%s)" % (self.sqrt, self.supNums[3]),
                 ["Semi-Major Axis (AU)"]]
+    # Semi-major Axis
+    # values[0] = Orbital Period
+    def astKeplersThird2Equation(self, values):
+        return (values[0]**2)**(1./3.)
+    # Period = sqrt(Semi-Major_Axis^3)
+    def astKeplersThird2Print(self):
+        return ["Semi-Major Axis (AU)",
+                "a = %s(p%s)" % (self.cbrt, self.supNums[2]),
+                ["Orbital Period (yrs)"]]
 
 
 
