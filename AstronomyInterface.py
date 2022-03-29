@@ -32,6 +32,8 @@ class AstronomyInterface:
 
     # Creates the main page
     def createMain(self, middle):
+        xpad = 10
+        ypad = 10
         btnNum = 1
         for mainBtn in self.mainButtons:
             currButton = tk.Button(
@@ -40,7 +42,7 @@ class AstronomyInterface:
                     self.createPage(pageName, self.backToMain, "create"+pageName),
                 height=2, anchor="w", cursor="hand2"
             )
-            currButton.pack(in_=middle,fill=tk.BOTH, expand=True, padx=10, pady=10)
+            currButton.pack(in_=middle,fill=tk.BOTH, expand=True, padx=xpad, pady=ypad)
 
             btnNum+=1
     # End of createMain
@@ -107,6 +109,8 @@ class AstronomyInterface:
     # If equationType = "Physics Equations" add physics equations to scrollFrame
     # Else add astronomy equations to scrollFrame
     def addEquationsToFrame(self, scrollFrame, equationType, currRow):
+        ypad = 15
+        xpad = 5
         equations=[]
         prints=[]
         if (equationType == "Physics Equations"):
@@ -121,13 +125,15 @@ class AstronomyInterface:
             height=2,
             font=("Times 15 bold underline")
         )
-        typeLabel.grid(in_=scrollFrame, row=currRow, column=0, pady=15, padx=5, columnspan=2, sticky=tk.EW)
+        typeLabel.grid(in_=scrollFrame, row=currRow, column=0,
+                       pady=ypad, padx=xpad, columnspan=2, sticky=tk.EW)
         currRow+=1
 
         for i in range(len(equations)):
             aboutEquation = getattr(self.ae, prints[i])()
             equationName = tk.Label(text=aboutEquation[0][0])
-            equationName.grid(in_=scrollFrame, row=currRow, column=0, pady=15,padx=5,sticky=tk.EW)
+            equationName.grid(in_=scrollFrame, row=currRow, column=0,
+                              pady=ypad, padx=xpad, sticky=tk.EW)
 
             equationButton = tk.Button(height=1, width=20, relief=tk.FLAT,
                             bg="gray99", fg="purple3",
@@ -205,7 +211,7 @@ class AstronomyInterface:
     # Used to create the Simulation page
     def createSimulation(self, middle):
         canvas = tk.Canvas(width=200, height = 200, bg="black")
-        canvas.pack(in_=middle)
+        canvas.pack(in_=middle, fill=tk.BOTH, expand=True)
     # End createSimulation
 
 

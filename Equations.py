@@ -5,14 +5,14 @@ class AstronomyEquations:
     # This is a class that holds all my equations and
     # all of the methods to print the equations
     def __init__(self):
+        # Constants
+        self.G = 6.67408 * 10**(-11)
         # Supersciprt and Subscript Numbers 0-9
         #                 0        1        2        3        4        5        6        7        8        9
         self.supNums = ['\u2070','\u00b9','\u00b2','\u00b3','\u2074','\u2075','\u2076','\u2077','\u2078','\u2079']
         self.subNums = ['\u2080','\u2081','\u2082','\u2083','\u2084','\u2085','\u2086','\u2087','\u2088','\u2089']
-
         self.sqrt = '\u221A'
         self.cbrt = '\u221B'
-
         # Greek Characters
         self.greek = {'alpha': '\u03B1', 'theta': '\u03B8'}
         # End init
@@ -79,33 +79,33 @@ class AstronomyEquations:
                  "Time (s):  t ="]]    # Final Velocity
     # values[0] = Initial Velocity
     # values[1] = Acceleration
-    # values[2] = Final Position
     # values[2] = Initial Position
-    def phyFinalVelocity2Equation(self, Initial_Velocity, Acceleration, Final_Position, Initial_Position):
-        return values[0]**2 + 2*values[1] * (values[2] - values[3])
+    # values[3] = Final Position
+    def phyFinalVelocity2Equation(self, values):
+        return (values[0]**2 + 2*values[1] * (values[3] - values[2]))**(1./2.)
     #
     def phyFinalVelocity2Print(self):
         return [["Final Velocity", " (m/s):  v%s = "%(self.subNums[1])],
                 "v%s = %s(v%s%s + 2a(x%s - x%s))" % (self.subNums[1], self.sqrt, self.subNums[0], self.supNums[2], self.subNums[1], self.subNums[0]),
                 ["Initial Velocity (m/s):  v%s = "%(self.subNums[0]),
                  "Acceleration (m/s^2):  a =",
-                 "Initial Position (m):  x%s ="%(self.subNums[0])],
-                 "Final Position (m):  x%s ="%(self.subNums[1])]
+                 "Initial Position (m):  x%s ="%(self.subNums[0]),
+                 "Final Position (m):  x%s ="%(self.subNums[1])]]
     # Final Position
     # values[0] = Initial Position
     # values[1] = Initial Velocity
-    # values[2] = Acceleration
-    # values[3] = Time
+    # values[2] = Time
+    # values[3] = Acceleration
     def phyFinalPositionEquation(self, values):
-        return values[0] + values[1]*values[3] + 0.5 * values[2] * values[3]**2
+        return values[0] + values[1]*values[2] + 0.5 * values[3] * values[2]**2
     # Final_Pos = Initial_Pos + Initial_Vel * Time + 1/2 * Acceleration * Time^2
     def phyFinalPositionPrint(self):
         return [["Final Position", " (m):  x%s ="%(self.subNums[1])],
                 "x%s = x%s + v%st + 0.5at%s" % (self.subNums[1], self.subNums[0], self.subNums[0], self.supNums[2]),
                 ["Initial Position (m):  x%s ="%(self.subNums[0]),
                  "Initial Velocity (m/s):  v%s ="%(self.subNums[0]),
-                 "Acceleration (m/s^2):  a =",
-                 "Time (s):  t ="]]
+                 "Time (s):  t =",
+                 "Acceleration (m/s^2):  a ="]]
 
     # Astronomy Equations
 
@@ -178,6 +178,17 @@ class AstronomyEquations:
         return [["Semi-Major Axis", " (AU):  a ="],
                 "a = %s(p%s)" % (self.cbrt, self.supNums[2]),
                 ["Orbital Period (yrs):  p ="]]
+    # Escape Velocity
+    # values[0] = Mass of planet/star
+    # values[1] = Radius of planet/star
+    def astEscapeVelocityEquation(self, values):
+        return ((2 * self.G * values[0]) / values[1])**(1./2.)
+    # Escape_Velocity = sqrt( (2*Gravitational_Constant * Mass) / Radius)
+    def astEscapeVelocityPrint(self):
+        return [["Escape Velocity", " (m/s): v ="],
+                "v = %s( (2GM) / r )"%(self.sqrt),
+                ["Planet/Star Mass (kg):  M =",
+                 "Planet/Star Radius (m):  r ="]]
 
 
 
