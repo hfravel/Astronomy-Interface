@@ -17,3 +17,6 @@ Superscript & Subscript Letters: https://unicode-table.com/en/sets/superscript-a
 Physics Equations: https://physics.info/equations/  
 
 Astronomy Equations: https://scioly.org/wiki/images/c/c6/Formula_Sheet.pdf
+
+HyperLink: https://stackoverflow.com/questions/50327234/adding-link-to-text-in-text-widget-in-tkinter
+
