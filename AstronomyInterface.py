@@ -38,7 +38,7 @@ class AstronomyInterface:
                 text=str(btnNum) + ") " + mainBtn,
                 command = lambda pageName=mainBtn:
                     self.createPage(pageName, self.backToMain, "create"+pageName),
-                height=2, anchor="w"
+                height=2, anchor="w", cursor="hand2"
             )
             currButton.pack(in_=middle,fill=tk.BOTH, expand=True, padx=10, pady=10)
 
@@ -73,7 +73,8 @@ class AstronomyInterface:
         if middleFunc != "createMain":
             backButton = tk.Button(
                 text="Back", height=2,
-                command=backFunc
+                command=backFunc,
+                cursor="hand2"
             )
             backButton.pack(in_=bottom, fill=tk.X, expand=True)
     # End createPage
@@ -98,7 +99,7 @@ class AstronomyInterface:
         # Create astronomy equation buttons in scrollframe
         currRow = self.addEquationsToFrame(scframe.interior, "Astronomy Equations", currRow)
 
-        switchButton=tk.Button(text="Switch View Button")
+        switchButton=tk.Button(text="Switch View Button", cursor="hand2")
         switchButton.pack(in_=middle, side=tk.TOP,fill=tk.X)
     # End createEquation
 
@@ -132,7 +133,8 @@ class AstronomyInterface:
                             bg="gray99", fg="purple3",
                             font="Dosis", text=aboutEquation[1],
                             command=lambda pr=getattr(self.ae, prints[i])(), eq=equations[i]:
-                                self.createPage(pr[1], self.backToEqua, "openEquation", eq))
+                                self.createPage(pr[1], self.backToEqua, "openEquation", eq),
+                            cursor="hand2")
             #btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
             equationButton.grid(in_=scrollFrame, row=currRow, column=1, sticky=tk.EW)
             currRow+=1
@@ -159,7 +161,8 @@ class AstronomyInterface:
         resultEntry = tk.Entry()
         calculateButton = tk.Button(text="Calculate",
                                     command = lambda pE=paramEntries, rE=resultEntry, eq=eq:
-                                        self.calculate(pE, rE, eq))
+                                        self.calculate(pE, rE, eq),
+                                    cursor="hand2")
         calculateButton.grid(in_=middle, row=rowNum, column=0, columnspan=2, padx=10, pady=5)
         resultEntry.grid(in_=middle, row=rowNum+1, column=1, padx=10, sticky=tk.EW)
     # End openEquation
