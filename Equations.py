@@ -148,7 +148,7 @@ class AstronomyEquations:
     # Object_Distance = 206265 * Object_Diameter / Angular_Size
     def astObjectDistancePrint(self):
         return [["Object's Distance", " (km): d ="],
-                "d = 206265D / %s" % (self.greek['alpha']),
+                "d = 206265 D / %s" % (self.greek['alpha']),
                 ["Angular Size (arc secs):  %s ="%(self.greek['alpha']),
                  "Object's Diameter (km):  D ="]]
     # Object Distance

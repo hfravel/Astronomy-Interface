@@ -26,6 +26,9 @@ class AstronomyInterface:
 
     # Clear the window for new page
     def destroyWidgets(self):
+        # Gets rid of the mousewheel binding from VerticalScrollFrame
+        self.window.unbind_all("<MouseWheel>")
+        # Clears the window's widgets to add the new page's widgets
         for widget in self.window.winfo_children():
             widget.destroy()
     # End destroyWidgets
