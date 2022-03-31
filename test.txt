@@ -12,4 +12,4 @@ Line after link
 Crab Nebula
 
 # Image M83_Galaxy.jpg
-M83 Galax7
+M83 Galaxy

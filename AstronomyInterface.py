@@ -8,6 +8,7 @@ class AstronomyInterface:
     # Create the Interface
     def __init__(self):
         self.title = "Astronomy Interface"
+        self.BG = "white"
         self.mainButtons = ["Help",
                             "Equation",
                             "Data",
@@ -43,7 +44,7 @@ class AstronomyInterface:
                 text=str(btnNum) + ") " + mainBtn,
                 command = lambda pageName=mainBtn:
                     self.createPage(pageName, self.backToMain, "create"+pageName),
-                height=2, anchor="w", cursor="hand2"
+                height=2, anchor='w', cursor="hand2"
             )
             currButton.pack(in_=middle,fill=tk.BOTH, expand=True, padx=xpad, pady=ypad)
 
@@ -53,9 +54,9 @@ class AstronomyInterface:
     # Start of the basic page creation
     def createPage(self, title, backFunc, middleFunc, eq=""):
         self.destroyWidgets()
-        top = tk.Frame()
-        middle = tk.Frame()
-        bottom = tk.Frame()
+        top = tk.Frame(bg=self.BG)
+        middle = tk.Frame(bg=self.BG)
+        bottom = tk.Frame(bg=self.BG)
         top.pack(side=tk.TOP, fill = tk.X)
         middle.pack(fill=tk.BOTH, expand=True)
         bottom.pack(side=tk.BOTTOM, fill=tk.X)
@@ -69,7 +70,7 @@ class AstronomyInterface:
 
         topLabel = tk.Label(
             text=title,
-            height=2,
+            height=2, bg = self.BG,
             font=("Times 15 bold underline")
         )
         topLabel.pack(in_=top, fill=tk.X)
