@@ -8,6 +8,8 @@ class AstronomyInterface:
     # Create the Interface
     def __init__(self):
         self.title = "Astronomy Interface"
+        self.titlefont = "Times 20 bold underline"
+        self.mainfont = "Times 12"
         self.BG = "white"
         self.mainButtons = ["Help",
                             "Equation",
@@ -40,7 +42,7 @@ class AstronomyInterface:
         ypad = 10
         btnNum = 1
         for mainBtn in self.mainButtons:
-            currButton = tk.Button(
+            currButton = tk.Button(background = "light blue", activebackground='purple', font=self.mainfont,
                 text=str(btnNum) + ") " + mainBtn,
                 command = lambda pageName=mainBtn:
                     self.createPage(pageName, self.backToMain, "create"+pageName),
@@ -57,9 +59,14 @@ class AstronomyInterface:
         top = tk.Frame(bg=self.BG)
         middle = tk.Frame(bg=self.BG)
         bottom = tk.Frame(bg=self.BG)
-        top.pack(side=tk.TOP, fill = tk.X)
-        middle.pack(fill=tk.BOTH, expand=True)
-        bottom.pack(side=tk.BOTTOM, fill=tk.X)
+        # top.pack(side=tk.TOP, fill = tk.X)
+        # middle.pack(fill=tk.BOTH, expand=True)
+        # bottom.pack(side=tk.BOTTOM, fill=tk.X)
+        self.window.grid_columnconfigure(0,weight=1)
+        self.window.grid_rowconfigure(1,weight=1)
+        top.grid(row=0,column=0, sticky=tk.NSEW)
+        middle.grid(row=1,column=0, sticky=tk.NSEW)
+        bottom.grid(row=2,column=0, sticky=tk.NSEW)
 
         # This is where the middle goes
         if eq=="":
@@ -71,18 +78,21 @@ class AstronomyInterface:
         topLabel = tk.Label(
             text=title,
             height=2, bg = self.BG,
-            font=("Times 15 bold underline")
+            font=self.titlefont
         )
         topLabel.pack(in_=top, fill=tk.X)
 
         # Creates the back Button
         if middleFunc != "createMain":
-            backButton = tk.Button(
+            backButton = tk.Button(font=self.mainfont,
                 text="Back", height=2,
                 command=backFunc,
                 cursor="hand2"
             )
             backButton.pack(in_=bottom, fill=tk.X, expand=True)
+            self.window.update()
+            print("BACK")
+            print(backButton.winfo_height())
     # End createPage
 
     # Used to create the Help page
@@ -214,8 +224,44 @@ class AstronomyInterface:
 
     # Used to create the Simulation page
     def createSimulation(self, middle):
-        canvas = tk.Canvas(width=200, height = 200, bg="black")
+        canvas = tk.Canvas(bg="black")
         canvas.pack(in_=middle, fill=tk.BOTH, expand=True)
+
+        size = 7
+        self.window.update()
+        center_height = (canvas.winfo_height() - size) / 2
+        center_width = (canvas.winfo_width() - size) / 2
+
+        objs = [("Sun", 0.0, "yellow"),
+                 ("Mercury", 0.387, "grey"),
+                 ("Venus", 0.7, "orange"),
+                 ("Earth", 1.0, "green"),
+                 ("Mars", 1.524, "red"),
+                 ("Jupiter", 5.203, "tan"),
+                 ("Saturn", 9.555, "brown"),
+                 ("Uranus", 19.8, "light blue"),
+                 ("Neptune", 30.11, "blue")]
+        #sun = canvas.create_oval((center_width, center_height, center_width+size, center_height+size), fill="yellow")
+
+        bodies = []
+        for i in range(9):
+            bodies.append(canvas.create_oval((0,0,size,size), fill=objs[i][2]))
+
+        def resize(e):
+            self.window.update()
+            width = canvas.winfo_width()
+            centerX = (width - size) / 2
+            centerY = (canvas.winfo_height() - size) / 2
+
+            for i in range(9):
+                currCoord = canvas.coords(bodies[i])
+                canvas.move(bodies[i], ((objs[i][1] + 1) * width/32) - currCoord[0], centerY-currCoord[1])
+
+            #canvas.move(sun, centerX-coord[0], centerY-coord[1])
+            self.window.update()
+
+
+        canvas.bind("<Configure>", resize)
     # End createSimulation
 
 
