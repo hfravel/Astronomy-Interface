@@ -21,7 +21,7 @@ class VerticalScrolledFrame(tk.Frame):
         canvas.yview_moveto(0)
 
         # create a frame inside the canvas which will be scrolled with it
-        self.interior = tk.Frame(canvas)
+        self.interior = tk.Frame(canvas, bg='white')
         interior_id = canvas.create_window(0, 0, window=self.interior,
                                            anchor=tk.NW)
 
