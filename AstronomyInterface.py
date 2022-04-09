@@ -226,30 +226,51 @@ class AstronomyInterface:
     def createSimulation(self, middle):
         # Creates the canvas in which our solar system will lie
         canvas = tk.Canvas(bg="black")
-        tk.Button(text="WADDUP").pack(in_=middle)
+        startSim = tk.Button(text="Start")
+        startSim.pack(in_=middle)
         canvas.pack(in_=middle, fill=tk.BOTH, expand=True)
 
-        pos = 0
+        positions = [0.0 for i in range (9)]
+        sim = False
+        pos=0
         # 0 is full view, 1 is terrestrial planets
         view = 1
         # Size of our solar system objects
         size = 7
         # Data for each object
-        # (Name, orbital distance (AU), colour)
-        objs = [("Sun", 0.0, "yellow"),
-                 ("Mercury", 0.387, "grey"),
-                 ("Venus", 0.7, "orange"),
-                 ("Earth", 1.0, "green"),
-                 ("Mars", 1.524, "red"),
-                 ("Jupiter", 5.203, "tan"),
-                 ("Saturn", 9.555, "brown"),
-                 ("Uranus", 19.8, "light blue"),
-                 ("Neptune", 30.11, "blue")]
+        # (Name, orbital distance (AU), orbital period (days), colour)
+
+        objs = [("Sun", 0.0, 0.0, "yellow"),
+                 ("Mercury", 0.387, 88.0, "grey"),
+                 ("Venus", 0.7, 224.6, "orange"),
+                 ("Earth", 1.0, 365.2, "green"),
+                 ("Mars", 1.524, 687.0, "red"),
+                 ("Jupiter", 5.203, 4331.0, "tan"),
+                 ("Saturn", 9.555, 10747.0, "brown"),
+                 ("Uranus", 19.8, 30589.0, "light blue"),
+                 ("Neptune", 30.11, 59800.0, "blue")]
 
         # Create the sun and 8 planets: couldn't fit pluto
         bodies = []
         for i in range(9):
-            bodies.append(canvas.create_oval((0,0,size,size), fill=objs[i][2]))
+            bodies.append(canvas.create_oval((0,0,size,size), fill=objs[i][3]))
+
+        def simulation():
+            nonlocal positions
+            nonlocal sim
+            sim = not sim
+            while(sim):
+                try:
+                    for i in range(9):
+                        positions[i]+=0.001*i
+                    if view ==0:
+                        jovian()
+                    else:
+                        terrestrial()
+                except:
+                    print("WADDUP")
+                    sim = False
+
 
         # Updates planets positions in terrestial view
         def terrestrial():
@@ -263,8 +284,8 @@ class AstronomyInterface:
 
             for i in range(9):
                 oldPos = canvas.coords(bodies[i])
-                newXPos = centerX + (math.cos(pos) * (block * objs[i][1])) + size/2
-                newYPos = centerY + (math.sin(pos) * (block * objs[i][1])) + size/2
+                newXPos = centerX + (math.cos(positions[i]) * (block * objs[i][1])) + size/2
+                newYPos = centerY + (math.sin(positions[i]) * (block * objs[i][1])) + size/2
                 # canvas.move adds to the current position instead of putting at new coordinates, so:
                 # New_X_Position = Old_X_Position + (New_X_Position - Old_X_Position)
                 canvas.move(bodies[i], newXPos - oldPos[0], newYPos - oldPos[1])
@@ -297,11 +318,7 @@ class AstronomyInterface:
         # End resize
 
         canvas.bind("<Configure>", resize)
-
-        # while(True):
-        #     pos+=0.001
-        #     terrestrial()
-
+        startSim.config(command=simulation)
     # End createSimulation
 
 

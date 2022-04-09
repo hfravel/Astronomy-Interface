@@ -2,11 +2,10 @@ import tkinter as tk
 import webbrowser # Not Used?
 from functools import partial # Used in hyperlinking
 from PIL import ImageTk, Image # Used for added image into text
-import solver
 
-root=tk.Tk()
-root.title("Testing window")
-root.geometry("500x500")
+# root=tk.Tk()
+# root.title("Testing window")
+# root.geometry("500x500")
 
 # # Test lambda functions
 # def func(thing):
@@ -100,4 +99,18 @@ root.geometry("500x500")
 
 """This is my seperator"""
 
-root.mainloop()
+def func():
+    x = 0
+    print(x)
+    x+=1
+    def func2():
+        global x
+        print(x)
+        x+=1
+    func2()
+    x+=1
+    print(x)
+
+func()
+
+#root.mainloop()
