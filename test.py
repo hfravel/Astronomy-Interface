@@ -99,18 +99,18 @@ from PIL import ImageTk, Image # Used for added image into text
 
 """This is my seperator"""
 
-def func():
-    x = 0
-    print(x)
-    x+=1
-    def func2():
-        global x
-        print(x)
-        x+=1
-    func2()
-    x+=1
-    print(x)
-
-func()
+# def func():
+#     x = 0
+#     print(x)
+#     x+=1
+#     def func2():
+#         global x
+#         print(x)
+#         x+=1
+#     func2()
+#     x+=1
+#     print(x)
+#
+# func()
 
 #root.mainloop()
