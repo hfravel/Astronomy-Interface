@@ -2,7 +2,8 @@ import math
 import tkinter as tk
 from Equations import AstronomyEquations
 from VerticalScrolledFrame import VerticalScrolledFrame
-from inspect import signature
+#from inspect import signature I think this is useless
+#import time
 
 # Astronomy Class Declaration
 class AstronomyInterface:
@@ -79,7 +80,7 @@ class AstronomyInterface:
 
         topLabel = tk.Label(
             text=title,
-            height=2, bg = self.BG,
+            height=1, bg = self.BG,
             font=self.titlefont
         )
         topLabel.pack(in_=top, fill=tk.X)
@@ -87,7 +88,7 @@ class AstronomyInterface:
         # Creates the back Button
         if middleFunc != "createMain":
             backButton = tk.Button(font=self.mainfont, bg = self.buttonColor,
-                text="Back", height=2,
+                text="Back", height=1,
                 command=backFunc,
                 cursor="hand2"
             )
@@ -208,8 +209,13 @@ class AstronomyInterface:
             for entry in paramEntries:
                 params.append(float(entry.get()))
             resultEntry.insert(0, getattr(self.ae, equation)(params))
-        except:
-            resultEntry.insert(0, "ERROR")
+        except Exception as e:
+            if (isinstance(e, ZeroDivisionError)):
+                resultEntry.insert(0,"Invalid: Division by 0")
+            elif (isinstance(e, ValueError)):
+                resultEntry.insert(0, "Invalid: Improper Entry")
+            else:
+                resultEntry.insert(0, e)
     # End calculate
 
     # Used to create the Data page
@@ -224,22 +230,41 @@ class AstronomyInterface:
 
     # Used to create the Simulation page
     def createSimulation(self, middle):
-        # Creates the canvas in which our solar system will lie
-        canvas = tk.Canvas(bg="black")
-        startSim = tk.Button(text="Start")
-        startSim.pack(in_=middle)
-        canvas.pack(in_=middle, fill=tk.BOTH, expand=True)
-
+        jovianView = 0
+        terrView = 1
         positions = [0.0 for i in range (9)]
         sim = False
-        pos=0
-        # 0 is full view, 1 is terrestrial planets
-        view = 1
-        # Size of our solar system objects
+        view = 0
+        numViews = 2
         size = 7
+        speed = 1
+
+        # Creates the canvas in which our solar system will lie
+        canvas = tk.Canvas(bg="black")
+        # Create the buttons at the top
+        startSim = tk.Button(text="Start", width = 1,
+                             bg = self.buttonColor,
+                             font = self.mainfont)
+        switchView = tk.Button(text="Terrestrial View", width = 1,
+                             bg = self.buttonColor,
+                             font = self.mainfont)
+        # Configure the row and column weight
+        middle.grid_rowconfigure(1, weight=1)
+        middle.grid_columnconfigure(0, weight=1)
+        middle.grid_columnconfigure(1, weight=1)
+        # Add the buttons and canvas to the frame
+        startSim.grid(in_=middle,
+                      row=0, column=0,
+                      sticky=tk.EW)
+        switchView.grid(in_=middle,
+                      row=0, column=1,
+                      sticky=tk.EW)
+        canvas.grid(in_=middle,
+                    row=1, columnspan=2,
+                    sticky=tk.NSEW)
+
         # Data for each object
         # (Name, orbital distance (AU), orbital period (days), colour)
-
         objs = [("Sun", 0.0, 0.0, "yellow"),
                  ("Mercury", 0.387, 88.0, "grey"),
                  ("Venus", 0.7, 224.6, "orange"),
@@ -253,32 +278,18 @@ class AstronomyInterface:
         # Create the sun and 8 planets: couldn't fit pluto
         bodies = []
         for i in range(9):
-            bodies.append(canvas.create_oval((0,0,size,size), fill=objs[i][3]))
-
-        def simulation():
-            nonlocal positions
-            nonlocal sim
-            sim = not sim
-            while(sim):
-                try:
-                    for i in range(9):
-                        positions[i]+=0.001*i
-                    if view ==0:
-                        jovian()
-                    else:
-                        terrestrial()
-                except:
-                    print("WADDUP")
-                    sim = False
-
+            bodies.append(canvas.create_oval((0,0,size,size), fill=objs[i][3], tags=objs[i][0]))
 
         # Updates planets positions in terrestial view
-        def terrestrial():
+        def updatePlanets():
             # Makes sure winfo.width() gets right size of canvas
             self.window.update()
             width = canvas.winfo_width()
             # make sure the solar system is the size of the window
-            block = width / (objs[4][1] + 0.1) / 2
+            if view==jovianView:
+                block = width / (objs[8][1] + 2) / 2
+            else:
+                block = width / (objs[4][1] + 0.1) / 2
             centerX = (width - size) / 2
             centerY = (canvas.winfo_height() - size) / 2
 
@@ -291,34 +302,43 @@ class AstronomyInterface:
                 canvas.move(bodies[i], newXPos - oldPos[0], newYPos - oldPos[1])
 
             self.window.update()
-        # End Terrestrial
+        # End updatePlanets
 
-        # Updates planets positions in jovian view
-        def jovian():
-            self.window.update()
-            width = canvas.winfo_width()
-            block = width / (objs[8][1] + 2)
-            centerX = (width - size) / 2
-            centerY = (canvas.winfo_height() - size) / 2
+        def simulation():
+            nonlocal positions
+            nonlocal sim
+            nonlocal startSim
+            sim = not sim
+            try:
+                startSim.config(text="Stop")
+                while(sim):
+                    for i in range(1,9):
+                        positions[i]+= speed / objs[i][2]
+                    updatePlanets()
+                    self.window.update()
+                # End While
+                startSim.config(text="Start")
+            except Exception as e:
+                print(e)
+        # End simulation
 
-            for i in range(9):
-                currCoord = canvas.coords(bodies[i])
-                canvas.move(bodies[i], ((objs[i][1] + 1) * block) - currCoord[0], centerY-currCoord[1])
-
-            #canvas.move(sun, centerX-coord[0], centerY-coord[1])
-            self.window.update()
-        # End jovian
-
-        # Called when the window is resized
-        def resize(e):
-            if view == 0:
-                jovian()
+        def switch():
+            nonlocal view
+            nonlocal speed
+            nonlocal switchView
+            view = (view + 1) % numViews
+            if view == jovianView:
+                switchView.config(text="Terrestial View")
+                speed = 1
             else:
-                terrestrial()
-        # End resize
+                switchView.config(text="Jovian View")
+                speed = 0.2
+            updatePlanets()
 
-        canvas.bind("<Configure>", resize)
+        canvas.bind("<Configure>", lambda e: updatePlanets())
         startSim.config(command=simulation)
+        switchView.config(command=switch)
+        canvas.tag_bind(objs[0][0], "<Button-1>", lambda e: switch())
     # End createSimulation
 
 
