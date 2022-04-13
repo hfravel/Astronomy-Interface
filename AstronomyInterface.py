@@ -225,7 +225,29 @@ class AstronomyInterface:
 
     # Used to create the Learn page
     def createLearn(self, middle):
-        print("Learn")
+        sections = {"Main": ["Solar System", "Galaxy", "Universe"],
+                    "Solar System" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
+                                     "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"],
+                    "Galaxy"       : ["Galaxy", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
+                    "Universe"     : ["Big Bang", "IDK other stuff maybe"] }
+        currSec = "Main"
+        xpad = 10
+        ypad = 10
+        def changeSection(newSection):
+            nonlocal currSec
+            currSec = newSection
+            for widget in middle.winfo_children():
+                widget.destroy()
+            addButtons()
+        def addButtons():
+            for sec in sections[currSec]:
+                button = tk.Button(middle, text= sec,
+                                   command = lambda s=sec: changeSection(s),
+                                   background = self.buttonColor, activebackground="purple",
+                                   font=self.mainfont, cursor="hand2", anchor='w')
+                button.pack(fill=tk.BOTH, expand=True, padx=xpad, pady=ypad)
+
+        addButtons()
     # End createLearn
 
     # Used to create the Simulation page
@@ -304,6 +326,7 @@ class AstronomyInterface:
             self.window.update()
         # End updatePlanets
 
+        # Start or stop simulation
         def simulation():
             nonlocal positions
             nonlocal sim
@@ -322,6 +345,7 @@ class AstronomyInterface:
                 print(e)
         # End simulation
 
+        # Switch the view Terrestrial <-> Jovian
         def switch():
             nonlocal view
             nonlocal speed
@@ -335,6 +359,17 @@ class AstronomyInterface:
                 speed = 0.2
             updatePlanets()
 
+        # If cursor is over an object, change it to a clicker
+        def check_hand(e):
+            hand = ""
+            for body in bodies:
+                bbox = canvas.bbox(body)
+                if bbox[0] < e.x and bbox[2] > e.x and bbox[1] < e.y and bbox[3] > e.y:
+                    hand="hand2"
+            canvas.config(cursor=hand)
+
+
+        canvas.bind("<Motion>", check_hand)
         canvas.bind("<Configure>", lambda e: updatePlanets())
         startSim.config(command=simulation)
         switchView.config(command=switch)
