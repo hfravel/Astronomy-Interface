@@ -1,5 +1,7 @@
 # Astronomy-Interface
-This is (Hayden Fravel) Astronomy Interface. I hope you enjoy
+Hello, my name is Hayden Fravel and this is my Astronomy Interface.
+ I hope you enjoy.
+ If you have any questions, feel free to contact hmfravel@gmail.com.
 
 ###Uses:
 - To learn about basic & intermediate Astronomy topics.

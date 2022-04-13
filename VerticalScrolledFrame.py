@@ -61,9 +61,7 @@ if (__name__ == '__main__'):
                         bg="gray99", fg="purple3",
                         font="Dosis", text=getattr(astEq, x)(),
                         command=lambda i=i, x=x: openlink(i))
-        #btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
         btn.grid(in_= scframe.interior, row=i, column=1)
-        #mylist.insert(tk.END, getattr(astEq, eq)())
 
     def openlink(i):
         print(lis2[i])

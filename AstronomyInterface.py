@@ -2,8 +2,6 @@ import math
 import tkinter as tk
 from Equations import AstronomyEquations
 from VerticalScrolledFrame import VerticalScrolledFrame
-#from inspect import signature I think this is useless
-#import time
 
 # Astronomy Class Declaration
 class AstronomyInterface:
@@ -62,9 +60,6 @@ class AstronomyInterface:
         top = tk.Frame(bg=self.BG)
         middle = tk.Frame(bg=self.BG)
         bottom = tk.Frame(bg=self.BG)
-        # top.pack(side=tk.TOP, fill = tk.X)
-        # middle.pack(fill=tk.BOTH, expand=True)
-        # bottom.pack(side=tk.BOTTOM, fill=tk.X)
         self.window.grid_columnconfigure(0,weight=1)
         self.window.grid_rowconfigure(1,weight=1)
         top.grid(row=0,column=0, sticky=tk.NSEW)
@@ -115,9 +110,6 @@ class AstronomyInterface:
         currRow = self.addEquationsToFrame(scframe.interior, "Physics Equations", currRow)
         # Create astronomy equation buttons in scrollframe
         currRow = self.addEquationsToFrame(scframe.interior, "Astronomy Equations", currRow)
-
-        #switchButton=tk.Button(text="Switch View Button", cursor="hand2")
-        #switchButton.pack(in_=middle, side=tk.TOP,fill=tk.X)
     # End createEquation
 
     # Adds the equationType to scrollFrame starting at currRow
@@ -156,7 +148,6 @@ class AstronomyInterface:
                             command=lambda t=aboutEquation[0][0]+": "+aboutEquation[1], eq=equations[i]:
                                 self.createPage(t, self.backToEqua, "openEquation", eq),
                             cursor="hand2")
-            #btn.pack(padx=10, pady=5, side=tk.TOP, fill=tk.BOTH, expand=True)
             equationButton.grid(in_=scrollFrame, row=currRow, column=1, sticky=tk.EW)
             currRow+=1
 
@@ -319,8 +310,6 @@ class AstronomyInterface:
                 oldPos = canvas.coords(bodies[i])
                 newXPos = centerX + (math.cos(positions[i]) * (block * objs[i][1])) + size/2
                 newYPos = centerY + (math.sin(positions[i]) * (block * objs[i][1])) + size/2
-                # canvas.move adds to the current position instead of putting at new coordinates, so:
-                # New_X_Position = Old_X_Position + (New_X_Position - Old_X_Position)
                 canvas.move(bodies[i], newXPos - oldPos[0], newYPos - oldPos[1])
 
             self.window.update()
