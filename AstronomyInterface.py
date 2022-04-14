@@ -9,17 +9,20 @@ class AstronomyInterface:
     def __init__(self):
         self.title = "Astronomy Interface"
         self.titlefont = "Times 20 bold underline"
+        self.currData = "Data"
+        self.currLearn = "Learn"
         self.mainfont = "Times 12"
         self.BG = "white"
         self.buttonColor = "light blue"
         self.mainButtons = ["Help",
-                            "Equation",
-                            "Data",
                             "Learn",
+                            "Data",
+                            "Equation",
                             "Simulation"]
         self.ae = AstronomyEquations()
         self.backToMain = lambda: self.createPage(self.title, "", "createMain")
         self.backToEqua = lambda: self.createPage("Equation", self.backToMain, "createEquation")
+        #self.backToData = lambda: self.createPage("Data", self.backToMain, "createData")
 
         # Create the astonromy interface window
         self.window = tk.Tk(className=self.title)
@@ -37,38 +40,46 @@ class AstronomyInterface:
             widget.destroy()
     # End destroyWidgets
 
-    # Creates the main page
-    def createMain(self, middle):
-        xpad = 10
-        ypad = 10
-        btnNum = 1
-        for mainBtn in self.mainButtons:
-            currButton = tk.Button(background = "light blue", activebackground='purple', font=self.mainfont,
-                text=str(btnNum) + ") " + mainBtn,
-                command = lambda pageName=mainBtn:
-                    self.createPage(pageName, self.backToMain, "create"+pageName),
-                height=2, anchor='w', cursor="hand2"
-            )
-            currButton.pack(in_=middle,fill=tk.BOTH, expand=True, padx=xpad, pady=ypad)
+    # Creates a tkinter button with preset values
+    def createButton(self, frame, title, command, anchor, height):
+        return tk.Button(frame, text=title, command=command, anchor=anchor, height=height,
+                         background='light blue', activebackground='purple',
+                         font=self.mainfont, cursor='hand2')
+    # End createButton
 
-            btnNum+=1
-    # End of createMain
+    # Creates a scrollbox of buttons
+    def createScrollButton(self, frame, buttons):
+        scframe = VerticalScrolledFrame(frame)
+        #scframe.pack(in_=middle, side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        # scframe.interior.grid_rowconfigure(0,weight=1)
+        # scframe.interior.grid_columnconfigure(0,weight=1)
+
+        #row = 0
+        for b in buttons:
+            currButton = self.createButton(scframe.interior, b[0], b[1], 'w', 2)
+            currButton.pack(fill=tk.X, pady=5, padx=15)
+            #row += 1
+
+        return scframe
 
     # Start of the basic page creation
     def createPage(self, title, backFunc, middleFunc, eq=""):
         self.destroyWidgets()
-        top = tk.Frame(bg=self.BG)
-        middle = tk.Frame(bg=self.BG)
-        bottom = tk.Frame(bg=self.BG)
-        self.window.grid_columnconfigure(0,weight=1)
-        self.window.grid_rowconfigure(1,weight=1)
-        top.grid(row=0,column=0, sticky=tk.NSEW)
-        middle.grid(row=1,column=0, sticky=tk.NSEW)
-        bottom.grid(row=2,column=0, sticky=tk.NSEW)
+        top = tk.Frame(bg=self.BG, height=1)
+        middle = tk.Frame(bg=self.BG, height=1)
+        bottom = tk.Frame(bg=self.BG, height=1)
+        top.pack(fill=tk.X)
+        middle.pack(fill=tk.BOTH, expand=True)
+        bottom.pack(fill=tk.X)
+        # self.window.grid_columnconfigure(0,weight=1)
+        # self.window.grid_rowconfigure(1,weight=1)
+        # top.grid(row=0,column=0, sticky=tk.NSEW)
+        # middle.grid(row=1,column=0, sticky=tk.NSEW)
+        # bottom.grid(row=2,column=0, sticky=tk.NSEW)
 
         # This is where the middle goes
         if eq=="":
-            getattr(self, middleFunc)(middle)
+            backFunc = getattr(self, middleFunc)(middle)
         else:
             getattr(self, middleFunc)(middle, eq)
         # End the middle part
@@ -91,10 +102,76 @@ class AstronomyInterface:
             self.window.update()
     # End createPage
 
+    # Creates the main page
+    def createMain(self, middle):
+        xpad = 10
+        ypad = 10
+        btnNum = 1
+        for mainBtn in self.mainButtons:
+            currButton = tk.Button(background = "light blue", activebackground='purple', font=self.mainfont,
+                text=str(btnNum) + ") " + mainBtn,
+                command = lambda pageName=mainBtn:
+                    self.createPage(pageName, self.backToMain, "create"+pageName),
+                height=2, anchor='w', cursor="hand2"
+            )
+            currButton.pack(in_=middle,fill=tk.BOTH, expand=True, padx=xpad, pady=ypad)
+
+            btnNum+=1
+    # End of createMain
+
     # Used to create the Help page
     def createHelp(self, middle):
         print("Help")
+        return self.backToMain
     # End createHelp
+
+    # Used to create the Learn page
+    def createLearn(self, middle):
+        sections = {"Learn": ["Solar System", "Galaxy", "Universe"],
+                    "Solar System" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
+                                     "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"],
+                    "Galaxy"       : ["Galaxy", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
+                    "Universe"     : ["Big Bang", "IDK other stuff maybe"] }
+
+        def changePage(s):
+            self.currLearn = s;
+            self.createPage(s, "", "createLearn")
+
+        output = []
+        for sec in sections[self.currLearn]:
+            output.append([sec, lambda s=sec: changePage(s)])
+
+        scframe = self.createScrollButton(middle, output)
+        scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, pady=5, expand=True)
+        if (self.currLearn == "Learn"):
+            return self.backToMain
+        else:
+            return (lambda: changePage("Learn"))
+    # End createLearn
+
+    # Used to create the Data page
+    def createData(self, middle):
+        sections = {"Data": ["Solar System", "Galaxy", "Universe"],
+                    "Solar System" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
+                                     "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"],
+                    "Galaxy"       : ["Galaxy", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
+                    "Universe"     : ["Big Bang", "IDK other stuff maybe"] }
+
+        def changePage(s):
+            self.currData = s;
+            self.createPage(s, "", "createData")
+
+        output = []
+        for sec in sections[self.currData]:
+            output.append([sec, lambda s=sec: changePage(s)])
+
+        scframe = self.createScrollButton(middle, output)
+        scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        if (self.currData == "Data"):
+            return self.backToMain
+        else:
+            return (lambda: changePage("Data"))
+    # End createData
 
     # Used to create the Equation page
     def createEquation(self, middle):
@@ -110,6 +187,7 @@ class AstronomyInterface:
         currRow = self.addEquationsToFrame(scframe.interior, "Physics Equations", currRow)
         # Create astronomy equation buttons in scrollframe
         currRow = self.addEquationsToFrame(scframe.interior, "Astronomy Equations", currRow)
+        return self.backToMain
     # End createEquation
 
     # Adds the equationType to scrollFrame starting at currRow
@@ -209,38 +287,6 @@ class AstronomyInterface:
                 resultEntry.insert(0, e)
     # End calculate
 
-    # Used to create the Data page
-    def createData(self, middle):
-        print("Data")
-    # End createData
-
-    # Used to create the Learn page
-    def createLearn(self, middle):
-        sections = {"Main": ["Solar System", "Galaxy", "Universe"],
-                    "Solar System" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
-                                     "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"],
-                    "Galaxy"       : ["Galaxy", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
-                    "Universe"     : ["Big Bang", "IDK other stuff maybe"] }
-        currSec = "Main"
-        xpad = 10
-        ypad = 10
-        def changeSection(newSection):
-            nonlocal currSec
-            currSec = newSection
-            for widget in middle.winfo_children():
-                widget.destroy()
-            addButtons()
-        def addButtons():
-            for sec in sections[currSec]:
-                button = tk.Button(middle, text= sec,
-                                   command = lambda s=sec: changeSection(s),
-                                   background = self.buttonColor, activebackground="purple",
-                                   font=self.mainfont, cursor="hand2", anchor='w')
-                button.pack(fill=tk.BOTH, expand=True, padx=xpad, pady=ypad)
-
-        addButtons()
-    # End createLearn
-
     # Used to create the Simulation page
     def createSimulation(self, middle):
         jovianView = 0
@@ -277,21 +323,21 @@ class AstronomyInterface:
                     sticky=tk.NSEW)
 
         # Data for each object
-        # (Name, orbital distance (AU), orbital period (days), colour)
-        objs = [("Sun", 0.0, 0.0, "yellow"),
-                 ("Mercury", 0.387, 88.0, "grey"),
-                 ("Venus", 0.7, 224.6, "orange"),
-                 ("Earth", 1.0, 365.2, "green"),
-                 ("Mars", 1.524, 687.0, "red"),
-                 ("Jupiter", 5.203, 4331.0, "tan"),
-                 ("Saturn", 9.555, 10747.0, "brown"),
-                 ("Uranus", 19.8, 30589.0, "light blue"),
-                 ("Neptune", 30.11, 59800.0, "blue")]
+        # (Name, Perihelion (10^6 km), Aphelion (10^6 km), orbital period (days), colour)
+        objs = [("Sun",      0.0,    0.0,    0.0,     "yellow"),
+                 ("Mercury", 46.0,   69.8,   88,      "grey"),
+                 ("Venus",   107.5,  108.9,  224.6,   "orange"),
+                 ("Earth",   147.1,  152.1,  365.2,   "green"),
+                 ("Mars",    206.7,  249.3,  687.0,   "red"),
+                 ("Jupiter", 740.6,  816.4,  4331.0,  "tan"),
+                 ("Saturn",  1357.6, 1506.5, 10747.0, "brown"),
+                 ("Uranus",  2732.7, 3001.4, 30589.0, "light blue"),
+                 ("Neptune", 4471.1, 4558.9, 59800.0, "blue")]
 
         # Create the sun and 8 planets: couldn't fit pluto
         bodies = []
         for i in range(9):
-            bodies.append(canvas.create_oval((0,0,size,size), fill=objs[i][3], tags=objs[i][0]))
+            bodies.append(canvas.create_oval((0,0,size,size), fill=objs[i][4], tags=objs[i][0]))
 
         # Updates planets positions in terrestial view
         def updatePlanets():
@@ -300,15 +346,15 @@ class AstronomyInterface:
             width = canvas.winfo_width()
             # make sure the solar system is the size of the window
             if view==jovianView:
-                block = width / (objs[8][1] + 2) / 2
+                block = width / (objs[8][2] * 1.1) / 2
             else:
-                block = width / (objs[4][1] + 0.1) / 2
+                block = width / (objs[4][2] * 1.1) / 2
             centerX = (width - size) / 2
             centerY = (canvas.winfo_height() - size) / 2
 
             for i in range(9):
                 oldPos = canvas.coords(bodies[i])
-                newXPos = centerX + (math.cos(positions[i]) * (block * objs[i][1])) + size/2
+                newXPos = centerX + (math.cos(positions[i]) * (block * objs[i][2])) + size/2
                 newYPos = centerY + (math.sin(positions[i]) * (block * objs[i][1])) + size/2
                 canvas.move(bodies[i], newXPos - oldPos[0], newYPos - oldPos[1])
 
@@ -325,7 +371,7 @@ class AstronomyInterface:
                 startSim.config(text="Stop")
                 while(sim):
                     for i in range(1,9):
-                        positions[i]+= speed / objs[i][2]
+                        positions[i]+= speed / objs[i][3]
                     updatePlanets()
                     self.window.update()
                 # End While
@@ -363,6 +409,7 @@ class AstronomyInterface:
         startSim.config(command=simulation)
         switchView.config(command=switch)
         canvas.tag_bind(objs[0][0], "<Button-1>", lambda e: switch())
+        return self.backToMain
     # End createSimulation
 
 

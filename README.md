@@ -22,3 +22,4 @@ Astronomy Equations: https://scioly.org/wiki/images/c/c6/Formula_Sheet.pdf
 
 HyperLink: https://stackoverflow.com/questions/50327234/adding-link-to-text-in-text-widget-in-tkinter
 
+NASA Solar System Data: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
