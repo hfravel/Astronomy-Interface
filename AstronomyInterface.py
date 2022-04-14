@@ -20,14 +20,14 @@ class AstronomyInterface:
                             "Equation",
                             "Simulation"]
         self.ae = AstronomyEquations()
-        self.backToMain = lambda: self.createPage(self.title, "", "createMain")
-        self.backToEqua = lambda: self.createPage("Equation", self.backToMain, "createEquation")
+        self.backToMain = lambda: self.createPageStructure(self.title, "createMain")
+        self.backToEqua = lambda: self.createPageStructure("Equation", "createEquation")
         #self.backToData = lambda: self.createPage("Data", self.backToMain, "createData")
 
         # Create the astonromy interface window
         self.window = tk.Tk(className=self.title)
         self.window.geometry("500x500")
-        self.createPage(self.title, "", "createMain")
+        self.createPageStructure(self.title, "createMain")
         self.window.mainloop()
     # End init
 
@@ -62,26 +62,21 @@ class AstronomyInterface:
 
         return scframe
 
-    # Start of the basic page creation
-    def createPage(self, title, backFunc, middleFunc, eq=""):
+    # Creates all basic page Structures
+    def createPageStructure(self, title, middleFunc, eq=""):
         self.destroyWidgets()
-        top = tk.Frame(bg=self.BG, height=1)
-        middle = tk.Frame(bg=self.BG, height=1)
-        bottom = tk.Frame(bg=self.BG, height=1)
+        top = tk.Frame(self.window, bg=self.BG, height=1)
+        middle = tk.Frame(self.window, bg=self.BG, height=1)
+        bottom = tk.Frame(self.window, bg=self.BG, height=1)
         top.pack(fill=tk.X)
         middle.pack(fill=tk.BOTH, expand=True)
         bottom.pack(fill=tk.X)
-        # self.window.grid_columnconfigure(0,weight=1)
-        # self.window.grid_rowconfigure(1,weight=1)
-        # top.grid(row=0,column=0, sticky=tk.NSEW)
-        # middle.grid(row=1,column=0, sticky=tk.NSEW)
-        # bottom.grid(row=2,column=0, sticky=tk.NSEW)
 
         # This is where the middle goes
         if eq=="":
             backFunc = getattr(self, middleFunc)(middle)
         else:
-            getattr(self, middleFunc)(middle, eq)
+            backFunc = getattr(self, middleFunc)(middle, eq)
         # End the middle part
 
         topLabel = tk.Label(
@@ -93,30 +88,25 @@ class AstronomyInterface:
 
         # Creates the back Button
         if middleFunc != "createMain":
-            backButton = tk.Button(font=self.mainfont, bg = self.buttonColor,
-                text="Back", height=1,
-                command=backFunc,
-                cursor="hand2"
-            )
-            backButton.pack(in_=bottom, fill=tk.X, expand=True)
-            self.window.update()
-    # End createPage
+            backButton = self.createButton(bottom, "Back", backFunc, "center", 1)
+            backButton.pack(fill=tk.X, expand=True)
+            bottom.lift()
+    # End createPageStructure
 
     # Creates the main page
     def createMain(self, middle):
         xpad = 10
         ypad = 10
-        btnNum = 1
+        buttonNum = 1
+        buttons = []
         for mainBtn in self.mainButtons:
-            currButton = tk.Button(background = "light blue", activebackground='purple', font=self.mainfont,
-                text=str(btnNum) + ") " + mainBtn,
-                command = lambda pageName=mainBtn:
-                    self.createPage(pageName, self.backToMain, "create"+pageName),
-                height=2, anchor='w', cursor="hand2"
-            )
-            currButton.pack(in_=middle,fill=tk.BOTH, expand=True, padx=xpad, pady=ypad)
+            buttons.append([f"{buttonNum}) {mainBtn}",
+                            lambda title=mainBtn: self.createPageStructure(title, f"create{title}")])
+            buttonNum += 1
 
-            btnNum+=1
+        scframe = self.createScrollButton(middle, buttons)
+        scframe.pack(fill=tk.BOTH, expand=True)
+        return "" # No back button to return
     # End of createMain
 
     # Used to create the Help page
@@ -135,7 +125,7 @@ class AstronomyInterface:
 
         def changePage(s):
             self.currLearn = s;
-            self.createPage(s, "", "createLearn")
+            self.createPageStructure(s, "createLearn")
 
         output = []
         for sec in sections[self.currLearn]:
@@ -159,7 +149,7 @@ class AstronomyInterface:
 
         def changePage(s):
             self.currData = s;
-            self.createPage(s, "", "createData")
+            self.createPageStructure(s, "createData")
 
         output = []
         for sec in sections[self.currData]:
@@ -216,17 +206,14 @@ class AstronomyInterface:
 
         for i in range(len(equations)):
             aboutEquation = getattr(self.ae, prints[i])()
-            equationName = tk.Label(text=aboutEquation[0][0], bg='white')
-            equationName.grid(in_=scrollFrame, row=currRow, column=0,
+            equationName = tk.Label(scrollFrame, text=aboutEquation[0][0], bg=self.BG)
+            equationName.grid(row=currRow, column=0,
                               pady=ypad, padx=xpad, sticky=tk.EW)
 
-            equationButton = tk.Button(height=1, width=20, relief=tk.FLAT,
-                            bg="light blue", fg="purple3",
-                            font="Dosis", text=aboutEquation[1],
-                            command=lambda t=aboutEquation[0][0]+": "+aboutEquation[1], eq=equations[i]:
-                                self.createPage(t, self.backToEqua, "openEquation", eq),
-                            cursor="hand2")
-            equationButton.grid(in_=scrollFrame, row=currRow, column=1, sticky=tk.EW)
+            equationButton = self.createButton(scrollFrame, aboutEquation[1],
+                                               lambda t=aboutEquation[0][0]+": "+aboutEquation[1], eq=equations[i]:self.createPageStructure(t, "openEquation", eq),
+                                               "center", 1)
+            equationButton.grid(row=currRow, column=1, sticky=tk.EW)
             currRow+=1
 
         return currRow
@@ -265,6 +252,7 @@ class AstronomyInterface:
                              padx=xpad, pady=ypad)
         resultEntry.grid(in_=middle, row=rowNum+1, column=1,
                          padx=xpad, sticky=tk.EW)
+        return self.backToEqua
     # End openEquation
 
     # Method that calss each equation's function to calculate the result
