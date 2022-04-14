@@ -2,6 +2,7 @@ import math
 import tkinter as tk
 from Equations import AstronomyEquations
 from VerticalScrolledFrame import VerticalScrolledFrame
+from PIL import ImageTk, Image # Used for added image into text
 
 # Astronomy Class Declaration
 class AstronomyInterface:
@@ -13,7 +14,8 @@ class AstronomyInterface:
         self.currLearn = "Learn"
         self.mainfont = "Times 12"
         self.BG = "white"
-        self.buttonColor = "light blue"
+        self.imgs = []
+        # self.buttonColor = "light blue"
         self.mainButtons = ["Help",
                             "Learn",
                             "Data",
@@ -50,15 +52,10 @@ class AstronomyInterface:
     # Creates a scrollbox of buttons
     def createScrollButton(self, frame, buttons):
         scframe = VerticalScrolledFrame(frame)
-        #scframe.pack(in_=middle, side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        # scframe.interior.grid_rowconfigure(0,weight=1)
-        # scframe.interior.grid_columnconfigure(0,weight=1)
 
-        #row = 0
         for b in buttons:
             currButton = self.createButton(scframe.interior, b[0], b[1], 'w', 2)
             currButton.pack(fill=tk.X, pady=5, padx=15)
-            #row += 1
 
         return scframe
 
@@ -93,6 +90,36 @@ class AstronomyInterface:
             bottom.lift()
     # End createPageStructure
 
+    # Read
+    def readTextFile(self, frame, file):
+        readFile = open(file)
+
+        textBox = tk.Text(frame)
+        scrollBar = tk.Scrollbar(cursor="hand2", command=textBox.yview)
+        scrollBar.pack(in_=textBox, side=tk.RIGHT, fill=tk.Y)
+        textBox.config(yscrollcommand=scrollBar.set)
+        textBox.pack(fill=tk.BOTH, expand=True)
+
+        self.imgs = []
+        i = 0
+        for line in readFile:
+            if line[0] == "#":
+                splitLine = line.split()
+                # if splitLine[1] == "Hyper":
+                #     myText.insert(tk.END, splitLine[2] + "\n", hyperlink.add(partial(webbrowser.open, splitLine[3])))
+                if splitLine[1] == "Image":
+                    self.imgs.append(ImageTk.PhotoImage(Image.open(splitLine[2])))
+                    textBox.image_create(tk.END, image=self.imgs[i])
+                    i += 1
+                else:
+                    textBox.insert(tk.END, f"error <{line}>")
+                textBox.insert(tk.END, "\n")
+
+            else:
+                textBox.insert(tk.END, line)
+        textBox.config(state="disable")
+        #textBox.pack()
+
     # Creates the main page
     def createMain(self, middle):
         xpad = 10
@@ -111,6 +138,8 @@ class AstronomyInterface:
 
     # Used to create the Help page
     def createHelp(self, middle):
+        self.readTextFile(middle, "test.txt")
+        #textBox.pack(fill=tk.BOTH)
         print("Help")
         return self.backToMain
     # End createHelp
@@ -166,7 +195,7 @@ class AstronomyInterface:
     # Used to create the Equation page
     def createEquation(self, middle):
         scframe = VerticalScrolledFrame(middle)
-        scframe.pack(in_=middle, side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
         scframe.interior.grid_rowconfigure(0,weight=1)
         scframe.interior.grid_columnconfigure(0,weight=2)
@@ -244,11 +273,10 @@ class AstronomyInterface:
         resultText.grid(in_=middle, row=rowNum+1, column=0,
                         pady=ypad, ipadx=ixpad)
         resultEntry = tk.Entry()
-        calculateButton = tk.Button(text="Calculate",
-                                    command = lambda pE=paramEntries, rE=resultEntry, eq=eq:
-                                        self.calculate(pE, rE, eq),
-                                    cursor="hand2")
-        calculateButton.grid(in_=middle, row=rowNum, column=1,
+        calculateButton = self.createButton(middle, "Calculate",
+                                            lambda pE=paramEntries, rE=resultEntry, eq=eq: self.calculate(pE, rE, eq),
+                                            "center", 1)
+        calculateButton.grid(row=rowNum, column=1,
                              padx=xpad, pady=ypad)
         resultEntry.grid(in_=middle, row=rowNum+1, column=1,
                          padx=xpad, sticky=tk.EW)
@@ -277,39 +305,17 @@ class AstronomyInterface:
 
     # Used to create the Simulation page
     def createSimulation(self, middle):
-        jovianView = 0
-        terrView = 1
-        positions = [0.0 for i in range (9)]
-        sim = False
-        view = 0
-        numViews = 2
-        size = 7
-        speed = 1
-
-        # Creates the canvas in which our solar system will lie
-        canvas = tk.Canvas(bg="black")
-        # Create the buttons at the top
-        startSim = tk.Button(text="Start", width = 1,
-                             bg = self.buttonColor,
-                             font = self.mainfont)
-        switchView = tk.Button(text="Terrestrial View", width = 1,
-                             bg = self.buttonColor,
-                             font = self.mainfont)
         # Configure the row and column weight
         middle.grid_rowconfigure(1, weight=1)
         middle.grid_columnconfigure(0, weight=1)
         middle.grid_columnconfigure(1, weight=1)
-        # Add the buttons and canvas to the frame
-        startSim.grid(in_=middle,
-                      row=0, column=0,
-                      sticky=tk.EW)
-        switchView.grid(in_=middle,
-                      row=0, column=1,
-                      sticky=tk.EW)
-        canvas.grid(in_=middle,
-                    row=1, columnspan=2,
-                    sticky=tk.NSEW)
 
+        # Initialize our variables
+        positions = [0.0 for i in range (9)]
+        sim = False
+        view = "Jovian"
+        size = 7
+        speed = 1
         # Data for each object
         # (Name, Perihelion (10^6 km), Aphelion (10^6 km), orbital period (days), colour)
         objs = [("Sun",      0.0,    0.0,    0.0,     "yellow"),
@@ -322,18 +328,13 @@ class AstronomyInterface:
                  ("Uranus",  2732.7, 3001.4, 30589.0, "light blue"),
                  ("Neptune", 4471.1, 4558.9, 59800.0, "blue")]
 
-        # Create the sun and 8 planets: couldn't fit pluto
-        bodies = []
-        for i in range(9):
-            bodies.append(canvas.create_oval((0,0,size,size), fill=objs[i][4], tags=objs[i][0]))
-
         # Updates planets positions in terrestial view
         def updatePlanets():
             # Makes sure winfo.width() gets right size of canvas
             self.window.update()
             width = canvas.winfo_width()
             # make sure the solar system is the size of the window
-            if view==jovianView:
+            if view=="Jovian":
                 block = width / (objs[8][2] * 1.1) / 2
             else:
                 block = width / (objs[4][2] * 1.1) / 2
@@ -351,35 +352,31 @@ class AstronomyInterface:
 
         # Start or stop simulation
         def simulation():
-            nonlocal positions
-            nonlocal sim
-            nonlocal startSim
+            nonlocal positions, sim, startSimulationButton
             sim = not sim
             try:
-                startSim.config(text="Stop")
+                startSimulationButton.config(text="Stop")
                 while(sim):
                     for i in range(1,9):
                         positions[i]+= speed / objs[i][3]
                     updatePlanets()
                     self.window.update()
                 # End While
-                startSim.config(text="Start")
+                startSimulationButton.config(text="Start")
             except Exception as e:
                 print(e)
         # End simulation
 
         # Switch the view Terrestrial <-> Jovian
-        def switch():
-            nonlocal view
-            nonlocal speed
-            nonlocal switchView
-            view = (view + 1) % numViews
-            if view == jovianView:
-                switchView.config(text="Terrestial View")
-                speed = 1
-            else:
-                switchView.config(text="Jovian View")
+        def switchView():
+            nonlocal view, speed, switchViewButton
+            if view == "Jovian":
+                view = "Terrestrial"
                 speed = 0.2
+            else:
+                view = "Jovian"
+                speed = 1
+            switchViewButton.config(text=f"Switch View ({view})")
             updatePlanets()
 
         # If cursor is over an object, change it to a clicker
@@ -392,11 +389,24 @@ class AstronomyInterface:
             canvas.config(cursor=hand)
 
 
-        canvas.bind("<Motion>", check_hand)
+        # Creates the canvas in which our solar system will lie
+        canvas = tk.Canvas(middle, bg="black")
+        # Create the buttons at the top
+        startSimulationButton = self.createButton(middle, "Start", simulation, "center", 1)
+        switchViewButton = self.createButton(middle, "Switch View (Jovian)", switchView, "center", 1)
+        # Add the buttons and canvas to the frame
+        startSimulationButton.grid(row=0, column=0, sticky=tk.EW)
+        switchViewButton.grid(row=0, column=1, sticky=tk.EW)
+        canvas.grid(row=1, columnspan=2, sticky=tk.NSEW)
+
+        # Create the sun and 8 planets: couldn't fit pluto
+        bodies = []
+        for i in range(9):
+            bodies.append(canvas.create_oval((0,0,size,size), fill=objs[i][4], tags=objs[i][0]))
+
+        canvas.bind("<Motion>", lambda e: check_hand(e))
         canvas.bind("<Configure>", lambda e: updatePlanets())
-        startSim.config(command=simulation)
-        switchView.config(command=switch)
-        canvas.tag_bind(objs[0][0], "<Button-1>", lambda e: switch())
+        canvas.tag_bind(objs[0][0], "<Button-1>", lambda e: switchView())
         return self.backToMain
     # End createSimulation
 

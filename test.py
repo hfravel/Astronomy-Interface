@@ -59,7 +59,7 @@ myText.config(yscrollcommand=scroll.set)
 myText.pack(fill=tk.BOTH, expand=True)
 
 hyperlink = HyperlinkManager(myText)
-imgs = []
+#imgs = []
 i=0
 for line in testFile:
     if line[0] == "#":
@@ -68,9 +68,10 @@ for line in testFile:
             myText.insert(tk.END, splitLine[2]+"\n", hyperlink.add(partial(webbrowser.open,splitLine[3])))
         elif splitLine[1] == "Image":
 
-            imgs.append(ImageTk.PhotoImage(Image.open(splitLine[2])))
-            myText.image_create(tk.END, image=imgs[i])
-            i+=1
+            # imgs.append(ImageTk.PhotoImage(Image.open(splitLine[2])))
+            # myText.image_create(tk.END, image=imgs[i])
+            myText.image_create(tk.END, image=ImageTk.PhotoImage(Image.open(splitLine[2])))
+            #i+=1
             myText.insert(tk.END, "\n")
 
     else:
