@@ -61,7 +61,7 @@ class AstronomyInterface:
         return scframe
 
     # Creates all basic page Structures
-    def createPageStructure(self, title, middleFunc, eq=""):
+    def createPageStructure(self, title, middleFunc):
         self.destroyWidgets()
         top = tk.Frame(self.window, bg=self.BG, height=1)
         middle = tk.Frame(self.window, bg=self.BG, height=1)
@@ -90,13 +90,18 @@ class AstronomyInterface:
 
     # Read
     def readTextFile(self, frame, file):
-        readFile = open(f"./texts/{file}")
-
         textBox = tk.Text(frame, font=self.mainfont, bg=self.BG)
         scrollBar = tk.Scrollbar(frame, cursor="hand2", command=textBox.yview)
         scrollBar.pack(side=tk.RIGHT, fill=tk.Y)
         textBox.config(yscrollcommand=scrollBar.set)
         textBox.pack(fill=tk.BOTH, expand=True, pady=self.pad[1])
+
+        try:
+            readFile = open(f"./texts/{file}")
+        except:
+            textBox.insert(tk.END, f"No such file found: {file}.")
+            return 0
+
 
         self.imgs = []
         i = 0
@@ -157,14 +162,9 @@ class AstronomyInterface:
 
             scframe = self.createScrollButton(middle, output)
             scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, pady=5, expand=True)
-            # if (self.currLearn == "Learn"):
-            #     return self.backToMain
-            # else:
-            #     return (lambda: changePage("Learn"))
         def createLearnText():
             fileName = self.currLearn.replace(" ", "")
             self.readTextFile(middle, f"{fileName}.txt")
-            # return (lambda: changePage("Learn"))
         def findPreviousPage():
             for page, pageList in sections.items():
                 if self.currLearn in pageList:
@@ -177,12 +177,6 @@ class AstronomyInterface:
             createLearnText()
         return findPreviousPage()
     # End createLearn
-
-    # # Creates individual learn pages
-    # def createLearnPage(self, middle, section):
-    #     fileName = section.replace(" ", "")
-    #     self.readTextFile(middle, f"{fileName}.txt")
-    #     return (lambda: changePage("Learn"))
 
     # Used to create the Data page
     def createData(self, middle):
@@ -401,6 +395,14 @@ class AstronomyInterface:
                     hand="hand2"
             canvas.config(cursor=hand)
 
+        def goLearn(body, where):
+            if where == "learn":
+                self.currLearn = body
+                self.createPageStructure(body, lambda m: self.createLearn(m))
+            else:
+                self.currData = body
+                self.createPageStructure(body, lambda m: self.createData(m))
+
 
         # Creates the canvas in which our solar system will lie
         canvas = tk.Canvas(middle, bg="black")
@@ -419,7 +421,10 @@ class AstronomyInterface:
 
         canvas.bind("<Motion>", lambda e: check_hand(e))
         canvas.bind("<Configure>", lambda e: updatePlanets())
-        canvas.tag_bind(objs[0][0], "<Button-1>", lambda e: switchView())
+        #canvas.tag_bind(objs[0][0], "<Button-1>", lambda e: switchView())
+        for body in objs:
+            canvas.tag_bind(body[0], "<Button-1>", lambda e, b=body[0]: goLearn(b, "learn"))
+            canvas.tag_bind(body[0], "<Button-3>", lambda e, b=body[0]: goLearn(b, "data"))
         return self.backToMain
     # End createSimulation
 
