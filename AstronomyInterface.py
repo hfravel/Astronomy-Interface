@@ -23,14 +23,14 @@ class AstronomyInterface:
         self.currLearn = "Learn"
         self.imgs = []
         self.ae = AstronomyEquations()
-        self.backToMain = lambda: self.createPageStructure(self.title, "createMain")
-        self.backToEqua = lambda: self.createPageStructure("Equation", "createEquation")
+        self.backToMain = lambda: self.createPageStructure(self.title, lambda m: self.createMain(m))
+        self.backToEqua = lambda: self.createPageStructure("Equation", lambda m: self.createEquation(m))
         #self.backToData = lambda: self.createPage("Data", self.backToMain, "createData")
 
         # Create the astonromy interface window
         self.window = tk.Tk(className=self.title)
         self.window.geometry("500x500")
-        self.createPageStructure(self.title, "createMain")
+        self.createPageStructure(self.title, lambda m: self.createMain(m))
         self.window.mainloop()
     # End init
 
@@ -71,10 +71,7 @@ class AstronomyInterface:
         bottom.pack(fill=tk.X)
 
         # This is where the middle goes
-        if eq=="":
-            backFunc = getattr(self, middleFunc)(middle)
-        else:
-            backFunc = getattr(self, middleFunc)(middle, eq)
+        backFunc = middleFunc(middle)
         # End the middle part
 
         topLabel = tk.Label(
@@ -85,7 +82,7 @@ class AstronomyInterface:
         topLabel.pack(in_=top, fill=tk.X)
 
         # Creates the back Button
-        if middleFunc != "createMain":
+        if title != self.title:
             backButton = self.createButton(bottom, "Back", backFunc, "center", 1)
             backButton.pack(fill=tk.X, expand=True)
             bottom.lift()
@@ -93,10 +90,10 @@ class AstronomyInterface:
 
     # Read
     def readTextFile(self, frame, file):
-        readFile = open(file)
+        readFile = open(f"./texts/{file}")
 
         textBox = tk.Text(frame, font=self.mainfont, bg=self.BG)
-        scrollBar = tk.Scrollbar(textBox, cursor="hand2", command=textBox.yview)
+        scrollBar = tk.Scrollbar(frame, cursor="hand2", command=textBox.yview)
         scrollBar.pack(side=tk.RIGHT, fill=tk.Y)
         textBox.config(yscrollcommand=scrollBar.set)
         textBox.pack(fill=tk.BOTH, expand=True, pady=self.pad[1])
@@ -126,8 +123,9 @@ class AstronomyInterface:
         buttonNum = 1
         buttons = []
         for mainBtn in self.mainButtons:
+            func = getattr(self, f"create{mainBtn}")
             buttons.append([f"{buttonNum}) {mainBtn}",
-                            lambda title=mainBtn: self.createPageStructure(title, f"create{title}")])
+                            lambda t=mainBtn, f=func: self.createPageStructure(t, lambda m: f(m))])
             buttonNum += 1
 
         scframe = self.createScrollButton(middle, buttons)
@@ -137,8 +135,7 @@ class AstronomyInterface:
 
     # Used to create the Help page
     def createHelp(self, middle):
-        self.readTextFile(middle, "test.txt")
-        print("Help")
+        self.readTextFile(middle, "help.txt")
         return self.backToMain
     # End createHelp
 
@@ -151,24 +148,41 @@ class AstronomyInterface:
                     "Universe"     : ["Big Bang", "IDK other stuff maybe"] }
 
         def changePage(s):
-            self.currLearn = s;
-            self.createPageStructure(s, "createLearn")
+            self.currLearn = s
+            self.createPageStructure(s, lambda m: self.createLearn(m))
+        def createLearnButtons():
+            output = []
+            for sec in sections[self.currLearn]:
+                output.append([sec, lambda s=sec: changePage(s)])
 
-        output = []
-        for sec in sections[self.currLearn]:
-            output.append([sec, lambda s=sec: changePage(s)])
-            # if sec in sections:
-            #     output.append([sec, lambda s=sec: changePage(s)])
+            scframe = self.createScrollButton(middle, output)
+            scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, pady=5, expand=True)
+            # if (self.currLearn == "Learn"):
+            #     return self.backToMain
             # else:
-            #     output.append([sec, lambda t=sec: self.createPageStructure(t, "")])
-
-        scframe = self.createScrollButton(middle, output)
-        scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, pady=5, expand=True)
-        if (self.currLearn == "Learn"):
+            #     return (lambda: changePage("Learn"))
+        def createLearnText():
+            fileName = self.currLearn.replace(" ", "")
+            self.readTextFile(middle, f"{fileName}.txt")
+            # return (lambda: changePage("Learn"))
+        def findPreviousPage():
+            for page, pageList in sections.items():
+                if self.currLearn in pageList:
+                    return lambda: changePage(page)
             return self.backToMain
+
+        if self.currLearn in sections:
+            createLearnButtons()
         else:
-            return (lambda: changePage("Learn"))
+            createLearnText()
+        return findPreviousPage()
     # End createLearn
+
+    # # Creates individual learn pages
+    # def createLearnPage(self, middle, section):
+    #     fileName = section.replace(" ", "")
+    #     self.readTextFile(middle, f"{fileName}.txt")
+    #     return (lambda: changePage("Learn"))
 
     # Used to create the Data page
     def createData(self, middle):
@@ -179,8 +193,8 @@ class AstronomyInterface:
                     "Universe"     : ["Big Bang", "IDK other stuff maybe"] }
 
         def changePage(s):
-            self.currData = s;
-            self.createPageStructure(s, "createData")
+            self.currData = s
+            self.createPageStructure(s, lambda m: self.createData(m))
 
         output = []
         for sec in sections[self.currData]:
@@ -235,13 +249,13 @@ class AstronomyInterface:
 
         for i in range(len(equations)):
             aboutEquation = getattr(self.ae, prints[i])()
+
             equationName = tk.Label(scrollFrame, text=aboutEquation[0][0], bg=self.BG)
             equationName.grid(row=currRow, column=0,
                               padx=self.pad[0], pady=self.pad[1], sticky=tk.EW)
+            equationFunction = lambda t=aboutEquation[0][0]+": "+aboutEquation[1], eq=equations[i]:self.createPageStructure(t, lambda m: self.openEquation(m, eq))
 
-            equationButton = self.createButton(scrollFrame, aboutEquation[1],
-                                               lambda t=aboutEquation[0][0]+": "+aboutEquation[1], eq=equations[i]:self.createPageStructure(t, "openEquation", eq),
-                                               "center", 1)
+            equationButton = self.createButton(scrollFrame, aboutEquation[1], equationFunction, "center", 1)
             equationButton.grid(row=currRow, column=1, sticky=tk.EW)
             currRow+=1
 
@@ -290,7 +304,6 @@ class AstronomyInterface:
             resultEntry.delete(0,tk.END)
 
             params = []
-            i=0
             for entry in paramEntries:
                 params.append(float(entry.get()))
             resultEntry.insert(0, getattr(self.ae, equation)(params))
