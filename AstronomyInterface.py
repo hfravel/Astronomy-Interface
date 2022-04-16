@@ -3,24 +3,25 @@ import tkinter as tk
 from Equations import AstronomyEquations
 from VerticalScrolledFrame import VerticalScrolledFrame
 from PIL import ImageTk, Image # Used for added image into text
+from tkinter import font
 
 # Astronomy Class Declaration
 class AstronomyInterface:
     # Create the Interface
     def __init__(self):
         self.title = "Astronomy Interface"
-        self.titlefont = "Times 20 bold underline"
-        self.currData = "Data"
-        self.currLearn = "Learn"
-        self.mainfont = "Times 12"
+        self.titlefont = ["Times New Roman", 20, "bold underline"]
+        self.mainfont = ["Arial CYR", 12]
         self.BG = "white"
-        self.imgs = []
-        # self.buttonColor = "light blue"
+        self.pad = [10, 5]
         self.mainButtons = ["Help",
                             "Learn",
                             "Data",
                             "Equation",
                             "Simulation"]
+        self.currData = "Data"
+        self.currLearn = "Learn"
+        self.imgs = []
         self.ae = AstronomyEquations()
         self.backToMain = lambda: self.createPageStructure(self.title, "createMain")
         self.backToEqua = lambda: self.createPageStructure("Equation", "createEquation")
@@ -55,7 +56,7 @@ class AstronomyInterface:
 
         for b in buttons:
             currButton = self.createButton(scframe.interior, b[0], b[1], 'w', 2)
-            currButton.pack(fill=tk.X, pady=5, padx=15)
+            currButton.pack(fill=tk.X, padx=self.pad[0], pady=self.pad[1])
 
         return scframe
 
@@ -94,11 +95,11 @@ class AstronomyInterface:
     def readTextFile(self, frame, file):
         readFile = open(file)
 
-        textBox = tk.Text(frame)
-        scrollBar = tk.Scrollbar(cursor="hand2", command=textBox.yview)
-        scrollBar.pack(in_=textBox, side=tk.RIGHT, fill=tk.Y)
+        textBox = tk.Text(frame, font=self.mainfont, bg=self.BG)
+        scrollBar = tk.Scrollbar(textBox, cursor="hand2", command=textBox.yview)
+        scrollBar.pack(side=tk.RIGHT, fill=tk.Y)
         textBox.config(yscrollcommand=scrollBar.set)
-        textBox.pack(fill=tk.BOTH, expand=True)
+        textBox.pack(fill=tk.BOTH, expand=True, pady=self.pad[1])
 
         self.imgs = []
         i = 0
@@ -122,8 +123,6 @@ class AstronomyInterface:
 
     # Creates the main page
     def createMain(self, middle):
-        xpad = 10
-        ypad = 10
         buttonNum = 1
         buttons = []
         for mainBtn in self.mainButtons:
@@ -139,7 +138,6 @@ class AstronomyInterface:
     # Used to create the Help page
     def createHelp(self, middle):
         self.readTextFile(middle, "test.txt")
-        #textBox.pack(fill=tk.BOTH)
         print("Help")
         return self.backToMain
     # End createHelp
@@ -159,6 +157,10 @@ class AstronomyInterface:
         output = []
         for sec in sections[self.currLearn]:
             output.append([sec, lambda s=sec: changePage(s)])
+            # if sec in sections:
+            #     output.append([sec, lambda s=sec: changePage(s)])
+            # else:
+            #     output.append([sec, lambda t=sec: self.createPageStructure(t, "")])
 
         scframe = self.createScrollButton(middle, output)
         scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, pady=5, expand=True)
@@ -195,7 +197,7 @@ class AstronomyInterface:
     # Used to create the Equation page
     def createEquation(self, middle):
         scframe = VerticalScrolledFrame(middle)
-        scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True, pady=self.pad[1])
 
         scframe.interior.grid_rowconfigure(0,weight=1)
         scframe.interior.grid_columnconfigure(0,weight=2)
@@ -213,8 +215,6 @@ class AstronomyInterface:
     # If equationType = "Physics Equations" add physics equations to scrollFrame
     # Else add astronomy equations to scrollFrame
     def addEquationsToFrame(self, scrollFrame, equationType, currRow):
-        ypad = 15
-        xpad = 5
         equations=[]
         prints=[]
         if (equationType == "Physics Equations"):
@@ -225,19 +225,19 @@ class AstronomyInterface:
             prints = self.ae.getAstPrints()
 
         typeLabel = tk.Label(
-            text=equationType, bg='white',
-            height=2,
-            font=("Times 15 bold underline")
+            text=equationType, bg=self.BG,
+            height=1,
+            font=self.mainfont + ["bold underline"]
         )
         typeLabel.grid(in_=scrollFrame, row=currRow, column=0,
-                       pady=ypad, padx=xpad, columnspan=2, sticky=tk.EW)
+                       padx=self.pad[0], pady=self.pad[1], columnspan=2, sticky=tk.EW)
         currRow+=1
 
         for i in range(len(equations)):
             aboutEquation = getattr(self.ae, prints[i])()
             equationName = tk.Label(scrollFrame, text=aboutEquation[0][0], bg=self.BG)
             equationName.grid(row=currRow, column=0,
-                              pady=ypad, padx=xpad, sticky=tk.EW)
+                              padx=self.pad[0], pady=self.pad[1], sticky=tk.EW)
 
             equationButton = self.createButton(scrollFrame, aboutEquation[1],
                                                lambda t=aboutEquation[0][0]+": "+aboutEquation[1], eq=equations[i]:self.createPageStructure(t, "openEquation", eq),
