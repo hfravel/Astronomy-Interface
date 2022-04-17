@@ -138,4 +138,66 @@ myText.config(state="disable")
 # func = lambda x: x+1
 # print(func(5))
 
+"""This is my seperator"""
+
+# # Used to create the Learn page
+# def createLearn(self, middle):
+#     sections = {"Learn": ["Solar System", "Galaxy", "Universe"],
+#                 "Solar System": ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
+#                                  "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"],
+#                 "Galaxy": ["Galaxy", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
+#                 "Universe": ["Big Bang", "IDK other stuff maybe"]}
+#
+#     def changePage(s):
+#         self.currLearn = s
+#         self.createPageStructure(s, lambda m: self.createLearn(m))
+#
+#     def createLearnButtons():
+#         output = []
+#         for sec in sections[self.currLearn]:
+#             output.append([sec, lambda s=sec: changePage(s)])
+#
+#         scframe = self.createScrollButton(middle, output)
+#         scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, pady=5, expand=True)
+#
+#     def createLearnText():
+#         fileName = self.currLearn.replace(" ", "")
+#         self.readTextFile(middle, f"{fileName}.txt")
+#
+#     def findPreviousPage():
+#         for page, pageList in sections.items():
+#             if self.currLearn in pageList:
+#                 return lambda: changePage(page)
+#         return self.backToMain
+#
+#     if self.currLearn in sections:
+#         createLearnButtons()
+#     else:
+#         createLearnText()
+#     return findPreviousPage()
+# # End createLearn
+# # Used to create the Data page
+# def createData(self, middle):
+#     sections = {"Data": ["Solar System", "Galaxy", "Universe"],
+#                 "Solar System": ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
+#                                  "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"],
+#                 "Galaxy": ["Galaxy", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
+#                 "Universe": ["Big Bang", "IDK other stuff maybe"]}
+#
+#     def changePage(s):
+#         self.currData = s
+#         self.createPageStructure(s, lambda m: self.createData(m))
+#
+#     output = []
+#     for sec in sections[self.currData]:
+#         output.append([sec, lambda s=sec: changePage(s)])
+#
+#     scframe = self.createScrollButton(middle, output)
+#     scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+#     if (self.currData == "Data"):
+#         return self.backToMain
+#     else:
+#         return (lambda: changePage("Data"))
+# End createData
+
 root.mainloop()

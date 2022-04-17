@@ -19,8 +19,17 @@ class AstronomyInterface:
                             "Data",
                             "Equation",
                             "Simulation"]
-        self.currData = "Data"
-        self.currLearn = "Learn"
+        self.currInfoPage = {"Learn" : "Learn",
+                             "Data"  : "Data"}
+        learnPages = {"Learn": ["Solar System", "Galaxy", "Universe"],
+                    "Solar System" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
+                                     "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"],
+                    "Galaxy"       : ["Galaxy", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
+                    "Universe"     : ["Big Bang", "IDK other stuff maybe"] }
+        dataPages = {"Data" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
+                               "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"]}
+        self.infoPages = {"Learn" : learnPages,
+                          "Data"  : dataPages}
         self.imgs = []
         self.ae = AstronomyEquations()
         self.backToMain = lambda: self.createPageStructure(self.title, lambda m: self.createMain(m))
@@ -128,9 +137,14 @@ class AstronomyInterface:
         buttonNum = 1
         buttons = []
         for mainBtn in self.mainButtons:
-            func = getattr(self, f"create{mainBtn}")
+            if mainBtn == "Learn" or mainBtn == "Data":
+                func = lambda m, p=mainBtn, f=getattr(self, "createInfo"): f(m, p)
+            else:
+                func = lambda m, f=getattr(self, f"create{mainBtn}"): f(m)
+            #buttons.append([f"{buttonNum}) {mainBtn}",
+            #                lambda t=mainBtn, f=func: self.createPageStructure(t, lambda m: f(m))])
             buttons.append([f"{buttonNum}) {mainBtn}",
-                            lambda t=mainBtn, f=func: self.createPageStructure(t, lambda m: f(m))])
+                            lambda t=mainBtn, f=func: self.createPageStructure(t, f)])
             buttonNum += 1
 
         scframe = self.createScrollButton(middle, buttons)
@@ -144,63 +158,33 @@ class AstronomyInterface:
         return self.backToMain
     # End createHelp
 
-    # Used to create the Learn page
-    def createLearn(self, middle):
-        sections = {"Learn": ["Solar System", "Galaxy", "Universe"],
-                    "Solar System" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
-                                     "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"],
-                    "Galaxy"       : ["Galaxy", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
-                    "Universe"     : ["Big Bang", "IDK other stuff maybe"] }
-
-        def changePage(s):
-            self.currLearn = s
-            self.createPageStructure(s, lambda m: self.createLearn(m))
-        def createLearnButtons():
+    # Used to create the Learn and Data pages
+    def createInfo(self, middle, which):
+        def changePage(p):
+            self.currInfoPage[which] = p
+            self.createPageStructure(p, lambda m: self.createInfo(m, which))
+        def createInfoButtons():
             output = []
-            for sec in sections[self.currLearn]:
-                output.append([sec, lambda s=sec: changePage(s)])
+            for page in self.infoPages[which][self.currInfoPage[which]]:
+                output.append([page, lambda p=page: changePage(p)])
 
             scframe = self.createScrollButton(middle, output)
             scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, pady=5, expand=True)
-        def createLearnText():
-            fileName = self.currLearn.replace(" ", "")
-            self.readTextFile(middle, f"{fileName}.txt")
+        def createInfoText():
+            fileName = self.currInfoPage[which].replace(" ", "")
+            self.readTextFile(middle, f"{fileName}{which}.txt")
         def findPreviousPage():
-            for page, pageList in sections.items():
-                if self.currLearn in pageList:
+            for page, pageList in self.infoPages[which].items():
+                if self.currInfoPage[which] in pageList:
                     return lambda: changePage(page)
             return self.backToMain
 
-        if self.currLearn in sections:
-            createLearnButtons()
+        if self.currInfoPage[which] in self.infoPages[which]:
+            createInfoButtons()
         else:
-            createLearnText()
+            createInfoText()
         return findPreviousPage()
-    # End createLearn
-
-    # Used to create the Data page
-    def createData(self, middle):
-        sections = {"Data": ["Solar System", "Galaxy", "Universe"],
-                    "Solar System" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
-                                     "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"],
-                    "Galaxy"       : ["Galaxy", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
-                    "Universe"     : ["Big Bang", "IDK other stuff maybe"] }
-
-        def changePage(s):
-            self.currData = s
-            self.createPageStructure(s, lambda m: self.createData(m))
-
-        output = []
-        for sec in sections[self.currData]:
-            output.append([sec, lambda s=sec: changePage(s)])
-
-        scframe = self.createScrollButton(middle, output)
-        scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        if (self.currData == "Data"):
-            return self.backToMain
-        else:
-            return (lambda: changePage("Data"))
-    # End createData
+    # End createInfo
 
     # Used to create the Equation page
     def createEquation(self, middle):
@@ -340,13 +324,14 @@ class AstronomyInterface:
             # Makes sure winfo.width() gets right size of canvas
             self.window.update()
             width = canvas.winfo_width()
+            height = canvas.winfo_height()
             # make sure the solar system is the size of the window
             if view=="Jovian":
                 block = width / (objs[8][2] * 1.1) / 2
             else:
                 block = width / (objs[4][2] * 1.1) / 2
             centerX = (width - size) / 2
-            centerY = (canvas.winfo_height() - size) / 2
+            centerY = (height - size) / 2
 
             for i in range(9):
                 oldPos = canvas.coords(bodies[i])
@@ -380,7 +365,7 @@ class AstronomyInterface:
             if view == "Jovian":
                 view = "Terrestrial"
                 speed = 0.2
-            else:
+            elif view == "Terrestrial":
                 view = "Jovian"
                 speed = 1
             switchViewButton.config(text=f"Switch View ({view})")
@@ -395,13 +380,9 @@ class AstronomyInterface:
                     hand="hand2"
             canvas.config(cursor=hand)
 
-        def goLearn(body, where):
-            if where == "learn":
-                self.currLearn = body
-                self.createPageStructure(body, lambda m: self.createLearn(m))
-            else:
-                self.currData = body
-                self.createPageStructure(body, lambda m: self.createData(m))
+        def goToInfo(body, where):
+            self.currInfoPage[where] = body
+            self.createPageStructure(body, lambda m: self.createInfo(m, where))
 
 
         # Creates the canvas in which our solar system will lie
@@ -421,10 +402,10 @@ class AstronomyInterface:
 
         canvas.bind("<Motion>", lambda e: check_hand(e))
         canvas.bind("<Configure>", lambda e: updatePlanets())
-        #canvas.tag_bind(objs[0][0], "<Button-1>", lambda e: switchView())
+        # Set up the links to the simulation
         for body in objs:
-            canvas.tag_bind(body[0], "<Button-1>", lambda e, b=body[0]: goLearn(b, "learn"))
-            canvas.tag_bind(body[0], "<Button-3>", lambda e, b=body[0]: goLearn(b, "data"))
+            canvas.tag_bind(body[0], "<Button-1>", lambda e, b=body[0]: goToInfo(b, "Learn"))
+            canvas.tag_bind(body[0], "<Button-3>", lambda e, b=body[0]: goToInfo(b, "Data"))
         return self.backToMain
     # End createSimulation
 
