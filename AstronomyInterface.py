@@ -13,6 +13,7 @@ class AstronomyInterface:
         self.titlefont = ["Times New Roman", 20, "bold underline"]
         self.mainfont = ["Arial CYR", 12]
         self.BG = "white"
+        self.tw = None
         self.pad = [10, 5]
         self.mainButtons = ["Help",
                             "Learn",
@@ -31,6 +32,7 @@ class AstronomyInterface:
         self.infoPages = {"Learn" : learnPages,
                           "Data"  : dataPages}
         self.imgs = []
+        self.currToolTip=(0, None)
         self.ae = AstronomyEquations()
         self.backToMain = lambda: self.createPageStructure(self.title, lambda m: self.createMain(m))
         self.backToEqua = lambda: self.createPageStructure("Equation", lambda m: self.createEquation(m))
@@ -371,13 +373,36 @@ class AstronomyInterface:
             switchViewButton.config(text=f"Switch View ({view})")
             updatePlanets()
 
+        def showToolTip(objNum, bbox):
+            x = bbox[0] + canvas.winfo_rootx() - 5
+            y = bbox[1] + canvas.winfo_rooty() - 20
+            # creates a toplevel window
+            self.tw = tk.Toplevel(canvas)
+            # Leaves only the label and removes the app window
+            self.tw.wm_overrideredirect(True)
+            self.tw.wm_geometry("+%d+%d" % (x, y))
+            label = tk.Label(self.tw, text=objs[objNum-1][0], justify='left',
+                           background="white", relief='solid', borderwidth=1)
+            label.pack(ipadx=1)
+            self.currToolTip = (objNum, None)
+        def destroyToolTip(objNum):
+            if objNum == self.currToolTip[0]:
+                print("Done")
+                tw = self.tw
+                self.tw==None
+                tw.destroy()
+
         # If cursor is over an object, change it to a clicker
-        def check_hand(e):
+        def check_cursor(e):
             hand = ""
             for body in bodies:
                 bbox = canvas.bbox(body)
                 if bbox[0] < e.x and bbox[2] > e.x and bbox[1] < e.y and bbox[3] > e.y:
                     hand="hand2"
+                    showToolTip(body, bbox)
+                else:
+                    destroyToolTip(body)
+
             canvas.config(cursor=hand)
 
         def goToInfo(body, where):
@@ -400,7 +425,7 @@ class AstronomyInterface:
         for i in range(9):
             bodies.append(canvas.create_oval((0,0,size,size), fill=objs[i][4], tags=objs[i][0]))
 
-        canvas.bind("<Motion>", lambda e: check_hand(e))
+        canvas.bind("<Motion>", lambda e: check_cursor(e))
         canvas.bind("<Configure>", lambda e: updatePlanets())
         # Set up the links to the simulation
         for body in objs:
