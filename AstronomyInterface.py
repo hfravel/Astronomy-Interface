@@ -32,6 +32,7 @@ class AstronomyInterface:
         self.infoPages = {"Learn" : learnPages,
                           "Data"  : dataPages}
         self.imgs = []
+        # self.backPath = []
         self.currToolTip=(0, None)
         self.ae = AstronomyEquations()
         self.backToMain = lambda: self.createPageStructure(self.title, lambda m: self.createMain(m))
@@ -74,6 +75,7 @@ class AstronomyInterface:
     # Creates all basic page Structures
     def createPageStructure(self, title, middleFunc):
         self.destroyWidgets()
+        # self.backPath.append([title, middleFunc])
         top = tk.Frame(self.window, bg=self.BG, height=1)
         middle = tk.Frame(self.window, bg=self.BG, height=1)
         bottom = tk.Frame(self.window, bg=self.BG, height=1)
@@ -91,6 +93,11 @@ class AstronomyInterface:
             font=self.titlefont
         )
         topLabel.pack(in_=top, fill=tk.X)
+
+        # def getBackFunc():
+        #     self.backPath.pop(len(self.backPath)-1)
+        #     backFunc = self.backPath.pop(len(self.backPath)-1)
+        #     self.createPageStructure(backFunc[0], backFunc[1])
 
         # Creates the back Button
         if title != self.title:
@@ -296,6 +303,51 @@ class AstronomyInterface:
                 resultEntry.insert(0, e)
     # End calculate
 
+    def showToolTip(self, event=None):
+        x = y = 0
+        x, y, cx, cy = self.window.bbox("insert")
+        x += self.window.winfo_rootx() + 25
+        y += self.window.winfo_rooty() + 20
+        # creates a toplevel window
+        self.tw = tk.Toplevel(self.window)
+        # Leaves only the label and removes the app window
+        self.tw.wm_overrideredirect(True)
+        self.tw.wm_geometry("+%d+%d" % (x, y))
+        label = tk.Label(self.tw, text="wadup", justify='left',
+                       background="#ffffff", relief='solid', borderwidth=1,
+                       wraplength = 100)
+        label.pack(ipadx=1)
+
+        # # nonlocal  self
+        # x = bbox[0] + canvas.winfo_rootx() - 5
+        # y = bbox[1] + canvas.winfo_rooty() - 20
+        # # creates a toplevel window
+        # self.tw = tk.Toplevel(self.window)
+        # # Leaves only the label and removes the app window
+        # self.tw.wm_overrideredirect(True)
+        # self.tw.wm_geometry("+%d+%d" % (x, y))
+        # label = tk.Label(self.tw, text=objs[objNum-1][0], justify='left',
+        #                  background="white", relief='solid', borderwidth=1,
+        #                  wraplength=100)
+        # label.pack(ipadx=1)
+        # self.currToolTip = (objNum, None)
+    def destroyToolTip(self, event=None):
+        print("dest")
+        tw = self.tw
+        self.tw= None
+        if tw:
+            print("Attempt")
+            print(tw.destroy())
+        # # nonlocal self
+        # if objNum == self.currToolTip[0]:
+        #     print("Done")
+        #     tw = self.tw
+        #     self.tw=None
+        #     if tw:
+        #         print("Attempt")
+        #         print(tw.destroy())
+        #     self.currToolTip = (0, None)
+
     # Used to create the Simulation page
     def createSimulation(self, middle):
         # Configure the row and column weight
@@ -373,7 +425,13 @@ class AstronomyInterface:
             switchViewButton.config(text=f"Switch View ({view})")
             updatePlanets()
 
-        def showToolTip(objNum, bbox):
+        def goToInfo(body, where):
+            self.currInfoPage[where] = body
+            self.createPageStructure(body, lambda m: self.createInfo(m, where))
+
+        def showToolTip(objNum):
+            nonlocal self, canvas, objs, bodies
+            bbox = canvas.bbox(bodies[objNum-1])
             x = bbox[0] + canvas.winfo_rootx() - 5
             y = bbox[1] + canvas.winfo_rooty() - 20
             # creates a toplevel window
@@ -382,33 +440,18 @@ class AstronomyInterface:
             self.tw.wm_overrideredirect(True)
             self.tw.wm_geometry("+%d+%d" % (x, y))
             label = tk.Label(self.tw, text=objs[objNum-1][0], justify='left',
-                           background="white", relief='solid', borderwidth=1)
+                             background="white", relief='solid', borderwidth=1,
+                             wraplength=100)
             label.pack(ipadx=1)
             self.currToolTip = (objNum, None)
+
         def destroyToolTip(objNum):
-            if objNum == self.currToolTip[0]:
-                print("Done")
-                tw = self.tw
-                self.tw==None
+            nonlocal self
+            if (objNum != self.currToolTip[0]): return
+            tw = self.tw
+            self.tw = None
+            if tw:
                 tw.destroy()
-
-        # If cursor is over an object, change it to a clicker
-        def check_cursor(e):
-            hand = ""
-            for body in bodies:
-                bbox = canvas.bbox(body)
-                if bbox[0] < e.x and bbox[2] > e.x and bbox[1] < e.y and bbox[3] > e.y:
-                    hand="hand2"
-                    showToolTip(body, bbox)
-                else:
-                    destroyToolTip(body)
-
-            canvas.config(cursor=hand)
-
-        def goToInfo(body, where):
-            self.currInfoPage[where] = body
-            self.createPageStructure(body, lambda m: self.createInfo(m, where))
-
 
         # Creates the canvas in which our solar system will lie
         canvas = tk.Canvas(middle, bg="black")
@@ -425,12 +468,19 @@ class AstronomyInterface:
         for i in range(9):
             bodies.append(canvas.create_oval((0,0,size,size), fill=objs[i][4], tags=objs[i][0]))
 
-        canvas.bind("<Motion>", lambda e: check_cursor(e))
         canvas.bind("<Configure>", lambda e: updatePlanets())
         # Set up the links to the simulation
+        i = 1
         for body in objs:
             canvas.tag_bind(body[0], "<Button-1>", lambda e, b=body[0]: goToInfo(b, "Learn"))
             canvas.tag_bind(body[0], "<Button-3>", lambda e, b=body[0]: goToInfo(b, "Data"))
+            # bbox = canvas.bbox(bodies[i-1])
+            canvas.tag_bind(body[0], "<Enter>", lambda e, i=i: showToolTip(i))
+            canvas.tag_bind(body[0], "<Leave>", lambda e, i=i: destroyToolTip(i))
+            # canvas.tag_bind(body[0], "<Enter>", lambda e: canvas.config(cursor="hand2"))
+            # canvas.tag_bind(body[0], "<Leave>", lambda e: canvas.config(cursor=""))
+            i+=1
+
         return self.backToMain
     # End createSimulation
 

@@ -22,17 +22,18 @@ class CreateToolTip(object):
         self.wraplength = 180   #pixels
         self.widget = widget
         self.text = text
-        self.widget.bind("<Enter>", self.enter)
-        self.widget.bind("<Leave>", self.leave)
+        self.widget.bind("<Enter>", self.showtip)
+        self.widget.bind("<Leave>", self.hidetip)
         self.widget.bind("<ButtonPress>", self.leave)
         self.id = None
         self.tw = None
 
     def enter(self, event=None):
-        self.schedule()
+        #self.schedule()
+        self.showtip()
 
     def leave(self, event=None):
-        self.unschedule()
+        #self.unschedule()
         self.hidetip()
 
     def schedule(self):
@@ -60,7 +61,7 @@ class CreateToolTip(object):
                        wraplength = self.wraplength)
         label.pack(ipadx=1)
 
-    def hidetip(self):
+    def hidetip(self, event=None):
         tw = self.tw
         self.tw= None
         if tw:
