@@ -200,4 +200,10 @@ root.geometry("500x500")
 #         return (lambda: changePage("Data"))
 # End createData
 
-root.mainloop()
+"""This is my seperator"""
+
+# Test printing unicdoe \u2074
+content = "sup\\u2074"
+content = eval(f'r"""{content}"""')
+
+# root.mainloop()

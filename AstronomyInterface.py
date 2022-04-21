@@ -10,8 +10,8 @@ class AstronomyInterface:
     # Create the Interface
     def __init__(self):
         self.title = "Astronomy Interface"
-        self.titlefont = ["Times New Roman", 20, "bold underline"]
-        self.mainfont = ["Arial CYR", 12]
+        self.titlefont = ["Times New Roman", 24, "bold underline"]
+        self.mainfont = ["Arial CYR", 15]
         self.BG = "white"
         self.pad = [10, 5]
         self.mainButtons = ["Help",
@@ -34,6 +34,7 @@ class AstronomyInterface:
         # self.backPath = []
         self.currToolTip=(0, None)
         self.ae = AstronomyEquations()
+        self.supNums = ['\u2070', '\u00b9', '\u00b2', '\u00b3', u'\u2074', '\u2075', '\u2076', '\u2077', '\u2078', '\u2079']
         self.backToMain = lambda: self.createPageStructure(self.title, lambda m: self.createMain(m))
         self.backToEqua = lambda: self.createPageStructure("Equation", lambda m: self.createEquation(m))
         #self.backToData = lambda: self.createPage("Data", self.backToMain, "createData")
@@ -136,7 +137,7 @@ class AstronomyInterface:
                 textBox.insert(tk.END, "\n")
 
             else:
-                textBox.insert(tk.END, line)
+                textBox.insert(tk.END, eval(f'f"""{line}"""'))
         textBox.config(state="disable")
         #textBox.pack()
 
@@ -180,7 +181,7 @@ class AstronomyInterface:
             scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, pady=5, expand=True)
         def createInfoText():
             fileName = self.currInfoPage[which].replace(" ", "")
-            self.readTextFile(middle, f"{fileName}{which}.txt")
+            self.readTextFile(middle, f"{which}/{fileName}.txt")
         def findPreviousPage():
             for page, pageList in self.infoPages[which].items():
                 if self.currInfoPage[which] in pageList:

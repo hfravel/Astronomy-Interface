@@ -1,0 +1,20 @@
+Mass (10{self.supNums[2]}{self.supNums[4]} kg):   0.33
+Diameter (km):   4879
+Density (kg/m{self.supNums[3]}):   5429
+Gravity (m/s{self.supNums[2]}):   3.7
+Escape Velocity (km/s):   4.3
+Rotation Period (hours):   1407.6
+Length of Day (hours):   4222.6
+Distance from Sun (10{self.supNums[6]} km):   57.9
+Perihelion (10{self.supNums[6]} km):   46.0
+Aphelion (10{self.supNums[6]} km):   69.8
+Orbital Period (days):   88.0
+Orbital Velocity (km/s):   47.4
+Orbital Inclination (degrees):   7.0
+Orbital Eccentricity:   0.206
+Obliquity to Orbit (degrees):   0.034
+Mean Temperature (C):   167
+Surfaec Pressure (bars):   0
+Number of Moons:   0
+Ring System:   No
+Global Magnetic Field:   Yes
