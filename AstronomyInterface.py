@@ -13,7 +13,6 @@ class AstronomyInterface:
         self.titlefont = ["Times New Roman", 20, "bold underline"]
         self.mainfont = ["Arial CYR", 12]
         self.BG = "white"
-        self.tw = None
         self.pad = [10, 5]
         self.mainButtons = ["Help",
                             "Learn",
@@ -303,51 +302,6 @@ class AstronomyInterface:
                 resultEntry.insert(0, e)
     # End calculate
 
-    def showToolTip(self, event=None):
-        x = y = 0
-        x, y, cx, cy = self.window.bbox("insert")
-        x += self.window.winfo_rootx() + 25
-        y += self.window.winfo_rooty() + 20
-        # creates a toplevel window
-        self.tw = tk.Toplevel(self.window)
-        # Leaves only the label and removes the app window
-        self.tw.wm_overrideredirect(True)
-        self.tw.wm_geometry("+%d+%d" % (x, y))
-        label = tk.Label(self.tw, text="wadup", justify='left',
-                       background="#ffffff", relief='solid', borderwidth=1,
-                       wraplength = 100)
-        label.pack(ipadx=1)
-
-        # # nonlocal  self
-        # x = bbox[0] + canvas.winfo_rootx() - 5
-        # y = bbox[1] + canvas.winfo_rooty() - 20
-        # # creates a toplevel window
-        # self.tw = tk.Toplevel(self.window)
-        # # Leaves only the label and removes the app window
-        # self.tw.wm_overrideredirect(True)
-        # self.tw.wm_geometry("+%d+%d" % (x, y))
-        # label = tk.Label(self.tw, text=objs[objNum-1][0], justify='left',
-        #                  background="white", relief='solid', borderwidth=1,
-        #                  wraplength=100)
-        # label.pack(ipadx=1)
-        # self.currToolTip = (objNum, None)
-    def destroyToolTip(self, event=None):
-        print("dest")
-        tw = self.tw
-        self.tw= None
-        if tw:
-            print("Attempt")
-            print(tw.destroy())
-        # # nonlocal self
-        # if objNum == self.currToolTip[0]:
-        #     print("Done")
-        #     tw = self.tw
-        #     self.tw=None
-        #     if tw:
-        #         print("Attempt")
-        #         print(tw.destroy())
-        #     self.currToolTip = (0, None)
-
     # Used to create the Simulation page
     def createSimulation(self, middle):
         # Configure the row and column weight
@@ -431,25 +385,29 @@ class AstronomyInterface:
 
         def showToolTip(objNum):
             nonlocal self, canvas, objs, bodies
+            canvas.config(cursor="hand2")
             bbox = canvas.bbox(bodies[objNum-1])
-            x = bbox[0] + canvas.winfo_rootx() - 5
-            y = bbox[1] + canvas.winfo_rooty() - 20
+            x = bbox[0] + canvas.winfo_rootx() - 45
+            y = bbox[1] + canvas.winfo_rooty() - 55
             # creates a toplevel window
-            self.tw = tk.Toplevel(canvas)
+            tw = tk.Toplevel(canvas)
             # Leaves only the label and removes the app window
-            self.tw.wm_overrideredirect(True)
-            self.tw.wm_geometry("+%d+%d" % (x, y))
-            label = tk.Label(self.tw, text=objs[objNum-1][0], justify='left',
-                             background="white", relief='solid', borderwidth=1,
-                             wraplength=100)
+            tw.wm_overrideredirect(True)
+            tw.wm_geometry("+%d+%d" % (x, y))
+            tipText = f"{objs[objNum-1][0]}\nLeft-click to Learn\nRight-click for Data"
+            # tipText = objs[objNum-1][0] + " \nOther"
+            label = tk.Label(tw, text=tipText, justify='center',
+                             background=self.BG, relief='solid', borderwidth=1,
+                             wraplength=200)
             label.pack(ipadx=1)
-            self.currToolTip = (objNum, None)
+            self.currToolTip = (objNum, tw)
 
         def destroyToolTip(objNum):
-            nonlocal self
+            nonlocal self, canvas
+            canvas.config(cursor="")
             if (objNum != self.currToolTip[0]): return
-            tw = self.tw
-            self.tw = None
+            tw = self.currToolTip[1]
+            self.currToolTip = (0, None)
             if tw:
                 tw.destroy()
 
@@ -474,11 +432,8 @@ class AstronomyInterface:
         for body in objs:
             canvas.tag_bind(body[0], "<Button-1>", lambda e, b=body[0]: goToInfo(b, "Learn"))
             canvas.tag_bind(body[0], "<Button-3>", lambda e, b=body[0]: goToInfo(b, "Data"))
-            # bbox = canvas.bbox(bodies[i-1])
             canvas.tag_bind(body[0], "<Enter>", lambda e, i=i: showToolTip(i))
             canvas.tag_bind(body[0], "<Leave>", lambda e, i=i: destroyToolTip(i))
-            # canvas.tag_bind(body[0], "<Enter>", lambda e: canvas.config(cursor="hand2"))
-            # canvas.tag_bind(body[0], "<Leave>", lambda e: canvas.config(cursor=""))
             i+=1
 
         return self.backToMain
