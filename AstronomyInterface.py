@@ -112,6 +112,7 @@ class AstronomyInterface:
             readFile = open(f"./texts/{file}")
         except:
             textBox.insert(tk.END, f"No such file found: ./texts/{file}.")
+            textBox.config(state="disable")
             return 0
 
         self.textImages = []
