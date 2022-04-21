@@ -14,30 +14,24 @@ class AstronomyInterface:
         self.mainfont = ["Arial CYR", 15]
         self.BG = "white"
         self.pad = [10, 5]
-        self.mainButtons = ["Help",
-                            "Learn",
-                            "Data",
-                            "Equation",
-                            "Simulation"]
-        self.currInfoPage = {"Learn" : "Learn",
-                             "Data"  : "Data"}
+        self.mainButtons = ["Help", "Learn", "Data", "Equation", "Simulation"]
+
         learnPages = {"Learn": ["Solar System", "Galaxy", "Universe"],
-                    "Solar System" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
+                      "Solar System" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
                                      "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"],
-                    "Galaxy"       : ["Galaxy", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
-                    "Universe"     : ["Big Bang", "IDK other stuff maybe"] }
+                      "Galaxy"       : ["Galaxy", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
+                      "Universe"     : ["Big Bang", "IDK other stuff maybe"] }
         dataPages = {"Data" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
                                "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"]}
         self.infoPages = {"Learn" : learnPages,
                           "Data"  : dataPages}
-        self.imgs = []
-        # self.backPath = []
+        self.textImages = []
+        self.backPath = []
         self.currToolTip=(0, None)
         self.ae = AstronomyEquations()
         self.supNums = ['\u2070', '\u00b9', '\u00b2', '\u00b3', u'\u2074', '\u2075', '\u2076', '\u2077', '\u2078', '\u2079']
         self.backToMain = lambda: self.createPageStructure(self.title, lambda m: self.createMain(m))
         self.backToEqua = lambda: self.createPageStructure("Equation", lambda m: self.createEquation(m))
-        #self.backToData = lambda: self.createPage("Data", self.backToMain, "createData")
 
         # Create the astonromy interface window
         self.window = tk.Tk(className=self.title)
@@ -75,7 +69,7 @@ class AstronomyInterface:
     # Creates all basic page Structures
     def createPageStructure(self, title, middleFunc):
         self.destroyWidgets()
-        # self.backPath.append([title, middleFunc])
+        self.backPath.append([title, middleFunc])
         top = tk.Frame(self.window, bg=self.BG, height=1)
         middle = tk.Frame(self.window, bg=self.BG, height=1)
         bottom = tk.Frame(self.window, bg=self.BG, height=1)
@@ -84,7 +78,7 @@ class AstronomyInterface:
         bottom.pack(fill=tk.X)
 
         # This is where the middle goes
-        backFunc = middleFunc(middle)
+        middleFunc(middle)
         # End the middle part
 
         topLabel = tk.Label(
@@ -94,21 +88,21 @@ class AstronomyInterface:
         )
         topLabel.pack(in_=top, fill=tk.X)
 
-        # def getBackFunc():
-        #     self.backPath.pop(len(self.backPath)-1)
-        #     backFunc = self.backPath.pop(len(self.backPath)-1)
-        #     self.createPageStructure(backFunc[0], backFunc[1])
+        def getBackFunc():
+            self.backPath.pop(len(self.backPath)-1)
+            backFunc = self.backPath.pop(len(self.backPath)-1)
+            self.createPageStructure(backFunc[0], backFunc[1])
 
         # Creates the back Button
         if title != self.title:
-            backButton = self.createButton(bottom, "Back", backFunc, "center", 1)
+            backButton = self.createButton(bottom, "Back", getBackFunc, "center", 1)
             backButton.pack(fill=tk.X, expand=True)
             bottom.lift()
     # End createPageStructure
 
     # Read
     def readTextFile(self, frame, file):
-        textBox = tk.Text(frame, font=self.mainfont, bg=self.BG)
+        textBox = tk.Text(frame, font=self.mainfont, bg=self.BG, width=1, height=1)
         scrollBar = tk.Scrollbar(frame, cursor="hand2", command=textBox.yview)
         scrollBar.pack(side=tk.RIGHT, fill=tk.Y)
         textBox.config(yscrollcommand=scrollBar.set)
@@ -117,20 +111,17 @@ class AstronomyInterface:
         try:
             readFile = open(f"./texts/{file}")
         except:
-            textBox.insert(tk.END, f"No such file found: {file}.")
+            textBox.insert(tk.END, f"No such file found: ./texts/{file}.")
             return 0
 
-
-        self.imgs = []
+        self.textImages = []
         i = 0
         for line in readFile:
             if line[0] == "#":
                 splitLine = line.split()
-                # if splitLine[1] == "Hyper":
-                #     myText.insert(tk.END, splitLine[2] + "\n", hyperlink.add(partial(webbrowser.open, splitLine[3])))
                 if splitLine[1] == "Image":
-                    self.imgs.append(ImageTk.PhotoImage(Image.open(splitLine[2])))
-                    textBox.image_create(tk.END, image=self.imgs[i])
+                    self.textImages.append(ImageTk.PhotoImage(Image.open(splitLine[2])))
+                    textBox.image_create(tk.END, image=self.textImages[i])
                     i += 1
                 else:
                     textBox.insert(tk.END, f"error <{line}>")
@@ -139,61 +130,55 @@ class AstronomyInterface:
             else:
                 textBox.insert(tk.END, eval(f'f"""{line}"""'))
         textBox.config(state="disable")
-        #textBox.pack()
+    # End readTextFile
 
     # Creates the main page
     def createMain(self, middle):
         buttonNum = 1
         buttons = []
+        # Creates the list of buttons.  Structure = (Button Name, Button Function)
         for mainBtn in self.mainButtons:
-            if mainBtn == "Learn" or mainBtn == "Data":
-                func = lambda m, p=mainBtn, f=getattr(self, "createInfo"): f(m, p)
-            else:
-                func = lambda m, f=getattr(self, f"create{mainBtn}"): f(m)
-            #buttons.append([f"{buttonNum}) {mainBtn}",
-            #                lambda t=mainBtn, f=func: self.createPageStructure(t, lambda m: f(m))])
+            buttonFunc = lambda m, f=getattr(self,f"create{mainBtn}"): f(m)
             buttons.append([f"{buttonNum}) {mainBtn}",
-                            lambda t=mainBtn, f=func: self.createPageStructure(t, f)])
+                            lambda t=mainBtn, f=buttonFunc: self.createPageStructure(t, f)])
             buttonNum += 1
-
+        # Creates a scrollbar with the buttons from the loop above
         scframe = self.createScrollButton(middle, buttons)
         scframe.pack(fill=tk.BOTH, expand=True)
-        return "" # No back button to return
     # End of createMain
 
     # Used to create the Help page
     def createHelp(self, middle):
         self.readTextFile(middle, "help.txt")
-        return self.backToMain
     # End createHelp
 
     # Used to create the Learn and Data pages
-    def createInfo(self, middle, which):
-        def changePage(p):
-            self.currInfoPage[which] = p
-            self.createPageStructure(p, lambda m: self.createInfo(m, which))
-        def createInfoButtons():
+    def createInfo(self, middle, which, currPage):
+        # Adds a list of buttons to the page
+        if currPage in self.infoPages[which]:
             output = []
-            for page in self.infoPages[which][self.currInfoPage[which]]:
-                output.append([page, lambda p=page: changePage(p)])
+            for page in self.infoPages[which][currPage]:
+                func1 = lambda m, p=page: self.createInfo(m, which, p)
+                func2 = lambda p=page, f=func1: self.createPageStructure(p, f)
+                output.append([page, func2])
 
             scframe = self.createScrollButton(middle, output)
             scframe.pack(side=tk.BOTTOM, fill=tk.BOTH, pady=5, expand=True)
-        def createInfoText():
-            fileName = self.currInfoPage[which].replace(" ", "")
-            self.readTextFile(middle, f"{which}/{fileName}.txt")
-        def findPreviousPage():
-            for page, pageList in self.infoPages[which].items():
-                if self.currInfoPage[which] in pageList:
-                    return lambda: changePage(page)
-            return self.backToMain
-
-        if self.currInfoPage[which] in self.infoPages[which]:
-            createInfoButtons()
+        # Adds the text to the page
         else:
-            createInfoText()
-        return findPreviousPage()
+            fileName = currPage.replace(" ", "")
+            self.readTextFile(middle, f"{which}/{fileName}.txt")
     # End createInfo
+
+    # Creates the Learn Page
+    def createLearn(self, middle, page="Learn"):
+        self.createInfo(middle, "Learn", page)
+    # End createLearn
+
+    # Creates the Data Page
+    def createData(self, middle, page="Data"):
+        self.createInfo(middle, "Data", page)
+    # End createData
 
     # Used to create the Equation page
     def createEquation(self, middle):
@@ -205,16 +190,13 @@ class AstronomyInterface:
         scframe.interior.grid_columnconfigure(1,weight=3)
 
         currRow = 0
-        # Create physics equation buttons in scrollframe
+        # Create physics and astronomy equation buttons in scrollframe
         currRow = self.addEquationsToFrame(scframe.interior, "Physics Equations", currRow)
-        # Create astronomy equation buttons in scrollframe
         currRow = self.addEquationsToFrame(scframe.interior, "Astronomy Equations", currRow)
-        return self.backToMain
     # End createEquation
 
     # Adds the equationType to scrollFrame starting at currRow
-    # If equationType = "Physics Equations" add physics equations to scrollFrame
-    # Else add astronomy equations to scrollFrame
+    # equationType can be "Physics Equations" or "Astronomy Equations"
     def addEquationsToFrame(self, scrollFrame, equationType, currRow):
         equations=[]
         prints=[]
@@ -380,10 +362,6 @@ class AstronomyInterface:
             switchViewButton.config(text=f"Switch View ({view})")
             updatePlanets()
 
-        def goToInfo(body, where):
-            self.currInfoPage[where] = body
-            self.createPageStructure(body, lambda m: self.createInfo(m, where))
-
         def showToolTip(objNum):
             nonlocal self, canvas, objs, bodies
             canvas.config(cursor="hand2")
@@ -431,13 +409,14 @@ class AstronomyInterface:
         # Set up the links to the simulation
         i = 1
         for body in objs:
-            canvas.tag_bind(body[0], "<Button-1>", lambda e, b=body[0]: goToInfo(b, "Learn"))
-            canvas.tag_bind(body[0], "<Button-3>", lambda e, b=body[0]: goToInfo(b, "Data"))
+            learnFunc = lambda m, b=body[0]: self.createInfo(m, "Learn", b)
+            dataFunc = lambda m, b=body[0]: self.createInfo(m, "Data", b)
+            canvas.tag_bind(body[0], "<Button-1>", lambda e, b=body[0], f=learnFunc: self.createPageStructure(b, f))
+            canvas.tag_bind(body[0], "<Button-3>", lambda e, b=body[0], f=dataFunc: self.createPageStructure(b, f))
             canvas.tag_bind(body[0], "<Enter>", lambda e, i=i: showToolTip(i))
             canvas.tag_bind(body[0], "<Leave>", lambda e, i=i: destroyToolTip(i))
             i+=1
-
-        return self.backToMain
+        # End for
     # End createSimulation
 
 
