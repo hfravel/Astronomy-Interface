@@ -3,7 +3,7 @@ import tkinter as tk
 from Equations import AstronomyEquations
 from VerticalScrolledFrame import VerticalScrolledFrame
 from PIL import ImageTk, Image # Used for added image into text
-from tkinter import font
+# from tkinter import font
 
 # Astronomy Class Declaration
 class AstronomyInterface:
@@ -244,19 +244,20 @@ class AstronomyInterface:
         paramEntries = []
         rowNum = 0
         for param in printEq[2]:
-            paramText = tk.Label(text=param, anchor=tk.E)
+            paramText = tk.Label(text=param, anchor=tk.E, bg=self.BG, font=("Times", 12))
             paramText.grid(in_=middle, row=rowNum, column=0,
                            ipadx=ixpad, pady=ypad,
                            sticky="EW")
-            paramEntries.append(tk.Entry())
+            paramEntries.append(tk.Entry(bg=self.BG, font=("Times", 12)))
             paramEntries[rowNum].grid(in_=middle, row=rowNum,
                                       column=1, padx=xpad, sticky="NEW")
             rowNum+=1
 
-        resultText = tk.Label(text=printEq[0][0]+printEq[0][1], anchor=tk.E)
+        resultText = tk.Label(text=printEq[0][0]+printEq[0][1], anchor=tk.E,
+                              bg=self.BG, font=("Times", 12))
         resultText.grid(in_=middle, row=rowNum+1, column=0,
                         pady=ypad, ipadx=ixpad)
-        resultEntry = tk.Entry()
+        resultEntry = tk.Entry(bg=self.BG, font=("Times", 12))
         calculateButton = self.createButton(middle, "Calculate",
                                             lambda pE=paramEntries, rE=resultEntry, eq=eq: self.calculate(pE, rE, eq),
                                             "center", 1)
