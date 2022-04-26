@@ -121,8 +121,12 @@ class AstronomyInterface:
             if line[0] == "#":
                 splitLine = line.split()
                 if splitLine[1] == "Image":
-                    self.textImages.append(ImageTk.PhotoImage(Image.open(splitLine[2])))
+                    image = Image.open(splitLine[2])
+                    image = image.resize((300,300))
+                    self.textImages.append(ImageTk.PhotoImage(image))
+                    # self.textImages.append(ImageTk.PhotoImage(Image.open(splitLine[2])))
                     textBox.image_create(tk.END, image=self.textImages[i])
+
                     i += 1
                 else:
                     textBox.insert(tk.END, f"error <{line}>")

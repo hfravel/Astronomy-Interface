@@ -1,8 +1,11 @@
 Welcome to the Astronomy Interface.
-There are five categories you can enter and the Help page is where you are!
-I hope to be informative
+
+# Image ./images/Crab_Nebula.png
+
+From the home page you have 5 different places you can end up.  You clicked on the Help Page!  The four others are Learn, Data, Equation, and Simulation.
 
 Learn Pages:
+The learn page is to learn about Astronomy.  Go here if you want to learn about beginner and/or intermediate Astronomy topics.
 
 Data Pages:
 
