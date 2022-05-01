@@ -1,0 +1,6 @@
+Welcome to Sun!
+# Image ./src/images/Sun.png
+
+The Sun is located at roughly the center of our Solar System.  This is because the Solar System's center is not actually an object, but the System's center of mass.
+
+You can also go to the data page for the Sun to view data about the Sun!

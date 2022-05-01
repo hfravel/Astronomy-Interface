@@ -1,4 +1,0 @@
-Welcome to Sun!
-# Image ./images/Sun.png
-Its hot here so you did not survive.
-:(

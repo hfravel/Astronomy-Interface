@@ -19,8 +19,8 @@ class AstronomyInterface:
         learnPages = {"Learn": ["Solar System", "Galaxy", "Universe"],
                       "Solar System" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
                                      "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"],
-                      "Galaxy"       : ["Galaxy", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
-                      "Universe"     : ["Big Bang", "IDK other stuff maybe"] }
+                      "Galaxy"       : ["Galaxies", "Super Massive Black Hole", "Black Hole", "White Dwarf", "Neutron Star"],
+                      "Universe"     : ["Big Bang", "Entropy"] }
         dataPages = {"Data" : ["Sun", "Mercury", "Venus", "Earth", "Mars", "Astroid Belt",
                                "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Oort Cloud"]}
         self.infoPages = {"Learn" : learnPages,
@@ -109,9 +109,9 @@ class AstronomyInterface:
         textBox.pack(fill=tk.BOTH, expand=True, pady=self.pad[1])
 
         try:
-            readFile = open(f"./texts/{file}")
+            readFile = open(f"./src/texts/{file}")
         except:
-            textBox.insert(tk.END, f"No such file found: ./texts/{file}.")
+            textBox.insert(tk.END, f"No such file found: ./src/texts/{file}.")
             textBox.config(state="disable")
             return 0
 

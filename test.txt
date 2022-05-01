@@ -8,8 +8,8 @@ blank
 # Hyper  Tkinter https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/text-tag.html
 Line after link
 
-# Image ./images/Crab_Nebula.jpg
+# Image ./src/images/Crab_Nebula.jpg
 Crab Nebula
 
-# Image ./images/M83_Galaxy.jpg
+# Image ./src/images/M83_Galaxy.jpg
 ./images/M83 Galaxy

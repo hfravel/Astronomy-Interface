@@ -1,0 +1,17 @@
+Welcome to the Astronomy Interface.
+
+# Image ./src/images/Crab_Nebula.png
+
+From the home page you have 5 different places you can end up.  You clicked on the Help Page!  The four others are Learn, Data, Equation, and Simulation.
+
+Learn Pages:
+The learn page is to learn about Astronomy.  Go here if you want to learn about beginner and/or intermediate Astronomy topics.
+
+Data Pages:
+The data pages are to learn about the size of the solar system.  Go here to see the diameter of the planets, the mass of the planets, and much more!
+
+Equation Sheet:
+The equation page is where you can see a list of Astronomy and Physics equations and a place to use them.
+
+Simulation:
+The simulation page is where you can go to see a view of the solar system.  You can view it in either the full view (Jovian) or a smaller view (Terrestrial).
