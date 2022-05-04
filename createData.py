@@ -25,7 +25,7 @@ data = {"Mass (10{self.supNums[2]}{self.supNums[4]} kg):": [0.330,4.87,5.97,0.64
 
 i = 0
 for f in files:
-    file = open(f"./texts/Data/{f}.txt", "w")
+    file = open(f"./src/texts/Data/{f}.txt", "w")
     for d in data:
         s = f"{d}   {data[d][i]}\n"
         file.write(s)

@@ -137,6 +137,19 @@ class AstronomyInterface:
         textBox.config(state="disable")
     # End readTextFile
 
+    def readPageFormat(self, file):
+        pageFormat = {}
+        try:
+            readFile = open(f"./src/format/{file}")
+            for line in readFile:
+                line = line.strip()
+                splitLine = line.split(":")
+                pageFormat[splitLine[0]] = [item.strip() for item in splitLine[1].split(",")]
+        except:
+            print("Error loading File")
+        return pageFormat
+
+
     # Creates the main page
     def createMain(self, middle):
         buttonNum = 1
@@ -177,6 +190,7 @@ class AstronomyInterface:
 
     # Creates the Learn Page
     def createLearn(self, middle, page="Learn"):
+        self.readPageFormat("Learn.txt")
         self.createInfo(middle, "Learn", page)
     # End createLearn
 
@@ -302,7 +316,7 @@ class AstronomyInterface:
         positions = [0.0 for i in range (9)]
         sim = False
         view = "Jovian"
-        size = 7
+        size = 10
         speed = 1
         # Data for each object
         # (Name, Perihelion (10^6 km), Aphelion (10^6 km), orbital period (days), colour)
@@ -322,11 +336,17 @@ class AstronomyInterface:
             self.window.update()
             width = canvas.winfo_width()
             height = canvas.winfo_height()
+            print("Stats")
+            print(width)
+            print(height)
             # make sure the solar system is the size of the window
             if view=="Jovian":
                 block = width / (objs[8][2] * 1.1) / 2
-            else:
+            elif view=="Terrestrial":
                 block = width / (objs[4][2] * 1.1) / 2
+            else:
+                mercurySim()
+                return
             centerX = (width - size) / 2
             centerY = (height - size) / 2
 
@@ -339,6 +359,18 @@ class AstronomyInterface:
             self.window.update()
         # End updatePlanets
 
+        def mercurySim():
+            self.window.update()
+            width = canvas.winfo_width()
+            height = canvas.winfo_height()
+            sunSize = 1392000.0 / 47000000.0
+            mercSize = 4879.0 / 47000000.0
+            print(sunSize)
+            print(mercSize)
+            canvas.coords(bodies[0], 0, height/2, width*sunSize, height/2 + width*sunSize)
+            canvas.coords(bodies[1], width-10, height/2, width-10 + width*mercSize, height/2 + width*mercSize)
+
+
         # Start or stop simulation
         def simulation():
             nonlocal positions, sim, startSimulationButton
@@ -347,7 +379,7 @@ class AstronomyInterface:
                 startSimulationButton.config(text="Stop")
                 while(sim):
                     for i in range(1,9):
-                        positions[i]+= speed / objs[i][3]
+                        positions[i] -= speed / objs[i][3]
                     updatePlanets()
                     self.window.update()
                 # End While
@@ -373,7 +405,7 @@ class AstronomyInterface:
             canvas.config(cursor="hand2")
             bbox = canvas.bbox(bodies[objNum-1])
             x = bbox[0] + canvas.winfo_rootx() - 45
-            y = bbox[1] + canvas.winfo_rooty() - 55
+            y = bbox[1] + canvas.winfo_rooty() - 100
             # creates a toplevel window
             tw = tk.Toplevel(canvas)
             # Leaves only the label and removes the app window
@@ -381,7 +413,9 @@ class AstronomyInterface:
             tw.wm_geometry("+%d+%d" % (x, y))
             tipText = f"{objs[objNum-1][0]}\nLeft-click to Learn\nRight-click for Data"
             # tipText = objs[objNum-1][0] + " \nOther"
-            label = tk.Label(tw, text=tipText, justify='center',
+            font = self.mainfont
+            font[1] = 12
+            label = tk.Label(tw, text=tipText, justify='center', font=font,
                              background=self.BG, relief='solid', borderwidth=1,
                              wraplength=200)
             label.pack(ipadx=1)

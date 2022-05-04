@@ -202,8 +202,34 @@ root.geometry("500x500")
 
 """This is my seperator"""
 
-# Test printing unicdoe \u2074
-content = "sup\\u2074"
-content = eval(f'r"""{content}"""')
+# # Test printing unicdoe \u2074
+# content = "sup\\u2074"
+# content = eval(f'r"""{content}"""')
+
+"""This is my seperator"""
+
+# # Test Simulation sizes
+# canvas = tk.Canvas(root, bg="black")
+# canvas.pack(fill=tk.BOTH, expand=True)
+#
+# sunSize = 0.02
+# mercSize = 0.000085
+#
+# sun = canvas.create_oval((0, 0, 1, 1), fill="yellow")
+# mercury = canvas.create_oval((0, 0, 1, 1), fill="light blue")
+#
+# canvas.bind("<Configure>", lambda e: updatePlanets())
+# def updatePlanets():
+#     root.update()
+#     width = canvas.winfo_width()
+#     height = canvas.winfo_height()
+#
+#     canvas.coords(sun, 0, height/2, width*sunSize, height/2 + width*sunSize)
+#     canvas.coords(mercury, width-10, height/2, width-10 + width*mercSize, height/2 + width*mercSize)
+
+    # print("Stats")
+    # print(width)
+    # print(height)
+
 
 # root.mainloop()
