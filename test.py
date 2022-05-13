@@ -231,5 +231,34 @@ root.geometry("500x500")
     # print(width)
     # print(height)
 
+"""Seperator"""
+
+# # Testing subclasses
+#
+# class Parent:
+#     def __init__(self):
+#         self.x = 1
+#         print("Parent")
+#     def load(self):
+#         pass
+#     def destroy(self):
+#         print("Destroy")
+#
+# class Child(Parent):
+#     def __init__(self):
+#         self.y=2
+#         print("Child")
+#         Parent.__init__(self)
+#         print(self.x)
+#     def load(self):
+#         print("Load")
+#
+# # p = Parent()
+# c = Child()
+# c.load()
+# # p.load()
+# # print(c.x)
+# print(c.y)
 
 # root.mainloop()
+

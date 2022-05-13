@@ -1,5 +1,4 @@
 import tkinter as tk
-from Equations import AstronomyEquations
 
 class VerticalScrolledFrame(tk.Frame):
     def __init__(self, parent, *args, **kw):
@@ -42,28 +41,3 @@ class VerticalScrolledFrame(tk.Frame):
                 # update the inner frame's width to fill the canvas
                 canvas.itemconfigure(interior_id, width=canvas.winfo_width())
         canvas.bind('<Configure>', _configure_canvas)
-
-if (__name__ == '__main__'):
-    root = tk.Tk()
-    root.title("Scrollable Frame Demo")
-    root.configure(background="gray99")
-
-    scframe = VerticalScrolledFrame(root)
-    scframe.pack()
-
-    astEq = AstronomyEquations()
-    lis = astEq.getAstPrints()
-    lis2 = astEq.getAstEquations()
-    for i, x in enumerate(lis):
-        lbl = tk.Label(text="test")
-        lbl.grid(in_ = scframe.interior, row=i, column=0)
-        btn = tk.Button(height=1, width=20, relief=tk.FLAT,
-                        bg="gray99", fg="purple3",
-                        font="Dosis", text=getattr(astEq, x)(),
-                        command=lambda i=i, x=x: openlink(i))
-        btn.grid(in_= scframe.interior, row=i, column=1)
-
-    def openlink(i):
-        print(lis2[i])
-
-    root.mainloop()

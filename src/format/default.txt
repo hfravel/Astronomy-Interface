@@ -1,0 +1,35 @@
+Astronomy Interface 2.0:buttonList:5
+Help:text:Help.txt
+Learn:buttonList:3
+    Solar System:buttonList:11
+        Sun:text:LearnSun.txt
+        Mercury:text:LearnMercury.txt
+        Venus:text:LearnVenus.txt
+        Earth:text:LearnEarth.txt
+        Mars:text:LearnMars.txt
+        Astroid Belt:text:LearnAstroidBelt.txt
+        Jupiter:text:LearnJupiter.txt
+        Saturn:text:LearnSaturn.txt
+        Uranus:text:LearnUranus.txt
+        Neptune:text:LearnNeptune.txt
+        Oort Cloud:text:LearnOortCloud.txt
+    Galaxy:buttonList:2
+        Black Hole:text:LearnBlackHole.txt
+        Super-Massive Black Hole:text:LearnSuperMassiveBlackHole.txt
+    Universe:buttonList:2
+        Galaxies:text:LearnGalaxies.txt
+        Entropy:text:LearnEntropy:.txt
+Data:buttonList:11
+    Sun:text:DataSun.txt
+    Mercury:text:DataMercury.txt
+    Venus:text:DataVenus.txt
+    Earth:text:DataEarth.txt
+    Mars:text:DataMars.txt
+    Astroid Belt:text:DataAstroidBelt.txt
+    Jupiter:text:DataJupiter.txt
+    Saturn:text:DataSaturn.txt
+    Uranus:text:DataUranus.txt
+    Neptune:text:DataNeptune.txt
+    Oort Cloud:text:DataOortCloud.txt
+Equation:detailedButtons:Equations.txt
+Simulation:simulation:Sim.txt
