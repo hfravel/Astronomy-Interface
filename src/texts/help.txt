@@ -1,6 +1,6 @@
 Welcome to the Astronomy Interface.
 
-# Image ./src/images/Crab_Nebula.png
+# Image ./images/Crab_Nebula.png
 
 From the home page you have 5 different places you can end up.  You clicked on the Help Page!  The four others are Learn, Data, Equation, and Simulation.
 

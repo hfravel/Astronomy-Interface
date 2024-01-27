@@ -109,9 +109,9 @@ class AstronomyInterface:
         textBox.pack(fill=tk.BOTH, expand=True, pady=self.pad[1])
 
         try:
-            readFile = open(f"./src/texts/{file}")
+            readFile = open(f"./texts/{file}")
         except:
-            textBox.insert(tk.END, f"No such file found: ./src/texts/{file}.")
+            textBox.insert(tk.END, f"No such file found: ./texts/{file}.")
             textBox.config(state="disable")
             return 0
 
@@ -140,7 +140,7 @@ class AstronomyInterface:
     def readPageFormat(self, file):
         pageFormat = {}
         try:
-            readFile = open(f"./src/format/{file}")
+            readFile = open(f"./format/{file}")
             for line in readFile:
                 line = line.strip()
                 splitLine = line.split(":")
@@ -251,12 +251,12 @@ class AstronomyInterface:
     # End addEquationsToFrame
 
     # Opens a specific a page for a specific equation
-    def openEquation(self, middle, eq):
+    def openEquation(self, middle, equation):
         ixpad = 15
         xpad = 10
         ypad = 5
 
-        printEq = getattr(self.ae, eq[0:len(eq)-8] + "Print")()
+        printEq = getattr(self.ae, equation[0:len(equation) - 8] + "Print")()
 
         middle.grid_columnconfigure(1,weight=1)
         paramEntries = []
@@ -277,7 +277,7 @@ class AstronomyInterface:
                         pady=ypad, ipadx=ixpad)
         resultEntry = tk.Entry(bg=self.BG, font=("Times", 12))
         calculateButton = self.createButton(middle, "Calculate",
-                                            lambda pE=paramEntries, rE=resultEntry, eq=eq: self.calculate(pE, rE, eq),
+                                            lambda pE=paramEntries, rE=resultEntry, eq=equation: self.calculate(pE, rE, eq),
                                             "center", 1)
         calculateButton.grid(row=rowNum, column=1,
                              padx=xpad, pady=ypad)
@@ -336,9 +336,6 @@ class AstronomyInterface:
             self.window.update()
             width = canvas.winfo_width()
             height = canvas.winfo_height()
-            print("Stats")
-            print(width)
-            print(height)
             # make sure the solar system is the size of the window
             if view=="Jovian":
                 block = width / (objs[8][2] * 1.1) / 2
@@ -365,8 +362,6 @@ class AstronomyInterface:
             height = canvas.winfo_height()
             sunSize = 1392000.0 / 47000000.0
             mercSize = 4879.0 / 47000000.0
-            print(sunSize)
-            print(mercSize)
             canvas.coords(bodies[0], 0, height/2, width*sunSize, height/2 + width*sunSize)
             canvas.coords(bodies[1], width-10, height/2, width-10 + width*mercSize, height/2 + width*mercSize)
 
@@ -453,13 +448,13 @@ class AstronomyInterface:
             dataFunc = lambda m, b=body[0]: self.createInfo(m, "Data", b)
             canvas.tag_bind(body[0], "<Button-1>", lambda e, b=body[0], f=learnFunc: self.createPageStructure(b, f))
             canvas.tag_bind(body[0], "<Button-3>", lambda e, b=body[0], f=dataFunc: self.createPageStructure(b, f))
-            canvas.tag_bind(body[0], "<Enter>", lambda e, i=i: showToolTip(i))
-            canvas.tag_bind(body[0], "<Leave>", lambda e, i=i: destroyToolTip(i))
-            i+=1
+            canvas.tag_bind(body[0], "<Enter>", lambda e, j=i: showToolTip(j))
+            canvas.tag_bind(body[0], "<Leave>", lambda e, j=i: destroyToolTip(j))
+            i += 1
         # End for
     # End createSimulation
 
 
 # Execution Part
-if (__name__ == '__main__'):
+if __name__ == '__main__':
     ai = AstronomyInterface()
